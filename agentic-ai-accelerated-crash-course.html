@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic AI Engineering 2027 — Hızlandırılmış Uygulamalı Kurs</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --bg: #f8fafc;
+      --paper: #ffffff;
+      --border: #e2e8f0;
+      --code-bg: #0f172a;
+      --c0: #2563eb;
+      --c1: #7c3aed;
+      --c2: #0891b2;
+      --c3: #059669;
+      --c4: #d97706;
+      --c5: #db2777;
+      --c6: #4f46e5;
+      --c7: #dc2626;
+      --c8: #0d9488;
+    }
+
+    @page {
+      size: A4;
+      margin: 12mm 13mm 14mm 13mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 16px 60px 16px;
+      background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 45%, #ecfeff 100%);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.58;
+    }
+
+    .sheet {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--paper);
+      border-radius: 18px;
+      box-shadow: 0 20px 55px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+    }
+
+    /* Floating Print Bar */
+    .print-bar {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      max-width: 960px;
+      margin: 0 auto 14px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+    }
+    .print-bar-text { font-size: 13px; color: #cbd5e1; }
+    .print-bar-text strong { color: #fff; }
+    .print-btn {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #0f172a;
+      font-weight: 800;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .print-btn:hover { filter: brightness(1.08); }
+
+    /* Cover */
+    .cover {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 48%, #0e7490 100%);
+      color: #fff;
+      padding: 46px 42px 38px 42px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56,189,248,0.28), transparent 70%);
+      top: -90px;
+      right: -80px;
+    }
+    .cover-pill {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #bae6fd;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .cover h1 {
+      margin: 0 0 12px 0;
+      font-size: 31px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .cover h1 span {
+      background: linear-gradient(90deg, #38bdf8, #a78bfa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cover-sub {
+      font-size: 15px;
+      color: #cbd5e1;
+      max-width: 760px;
+      margin: 0 0 24px 0;
+    }
+    .cover-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .stat-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .stat-num { font-size: 19px; font-weight: 800; color: #38bdf8; }
+    .stat-lbl { font-size: 11.5px; color: #e2e8f0; margin-top: 2px; }
+
+    /* Content Wrapper */
+    .content { padding: 28px 36px 36px 36px; }
+
+    /* TOC */
+    .toc-card {
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      border: 1px solid #c7d2fe;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    .toc-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #312e81;
+      margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 18px;
+    }
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid #e2e8f0;
+    }
+    .toc-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Module Header */
+    .module {
+      margin-top: 28px;
+      padding-top: 6px;
+      page-break-before: always;
+      break-before: page;
+    }
+    .module-first {
+      page-break-before: auto;
+      break-before: auto;
+    }
+    .mod-banner {
+      border-radius: 14px;
+      padding: 16px 20px;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .mod-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .mod-banner h2 {
+      margin: 2px 0 0 0;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .mod-num-badge {
+      font-size: 24px;
+      font-weight: 900;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 10px;
+      padding: 6px 14px;
+      flex-shrink: 0;
+    }
+
+    h3.sec-h {
+      font-size: 14.5px;
+      font-weight: 800;
+      margin: 16px 0 8px 0;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h3.sec-h .sec-pill {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    p { margin: 0 0 9px 0; }
+    ul, ol { margin: 4px 0 10px 0; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Analogy Box */
+    .analogy-box {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border: 1px solid #fcd34d;
+      border-left: 5px solid #d97706;
+      border-radius: 10px;
+      padding: 11px 15px;
+      margin: 10px 0 12px 0;
+      break-inside: avoid;
+    }
+    .analogy-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #92400e;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    /* Key Terminology Grid */
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+      margin: 8px 0 14px 0;
+    }
+    .term-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid var(--c0);
+      border-radius: 9px;
+      padding: 9px 12px;
+      break-inside: avoid;
+    }
+    .term-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+    .term-desc {
+      font-size: 12px;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    /* Visual Flow Diagram */
+    .diagram-box {
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 10px 0 14px 0;
+      break-inside: avoid;
+    }
+    .diagram-caption {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    .flow-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .flow-row:last-child { margin-bottom: 0; }
+    .f-node {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.1);
+    }
+    .f-node-light {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: #fff;
+      color: #0f172a;
+      border: 1.5px solid #94a3b8;
+    }
+    .f-arrow {
+      font-weight: 900;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    /* Code Card */
+    .code-card {
+      background: var(--code-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 10px 0 14px 0;
+      border: 1px solid #1e293b;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.14);
+    }
+    .code-header {
+      background: #1e293b;
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid #334155;
+    }
+    .code-dots { display: flex; gap: 5px; }
+    .code-dots span { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .code-dots span:nth-child(1) { background: #ef4444; }
+    .code-dots span:nth-child(2) { background: #f59e0b; }
+    .code-dots span:nth-child(3) { background: #10b981; }
+    .code-title { color: #e2e8f0; font-size: 11.5px; font-weight: 700; flex: 1; }
+    .code-title code { background: rgba(255,255,255,0.1); color: #7dd3fc; border: none; font-size: 11px; }
+    .code-badge {
+      font-size: 10px;
+      font-weight: 800;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .code-pre {
+      margin: 0;
+      padding: 12px 14px;
+      color: #e2e8f0;
+      font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+      font-size: 10.6px;
+      line-height: 1.44;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+    }
+    .code-pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-size: inherit;
+    }
+    .tok-comment { color: #64748b; font-style: italic; }
+    .tok-docstring { color: #94a3b8; }
+    .tok-string { color: #86efac; }
+    .tok-decorator { color: #fbbf24; font-weight: 700; }
+    .tok-keyword { color: #c084fc; font-weight: 700; }
+    .tok-builtin { color: #38bdf8; }
+    .tok-number { color: #fb923c; }
+
+    .output-box {
+      background: #020617;
+      border-top: 1px solid #334155;
+      padding: 9px 14px;
+      break-inside: avoid;
+    }
+    .output-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: #34d399;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .output-label code { background: transparent; border: none; color: #94a3b8; padding: 0; font-size: 10px; }
+    .output-pre {
+      margin: 0;
+      color: #cbd5e1;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 10.4px;
+      line-height: 1.42;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Pitfalls & Challenge Split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+      break-inside: avoid;
+    }
+    .pitfall-card {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid #dc2626;
+      border-radius: 10px;
+      padding: 10px 13px;
+    }
+    .pitfall-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #991b1b;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .challenge-card {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-left: 4px solid #059669;
+      border-radius: 10px;
+      padding: 10px 13px;
+    }
+    .challenge-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #065f46;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    /* Tables */
+    table.styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      break-inside: avoid;
+    }
+    table.styled-table th {
+      background: #1e293b;
+      color: #fff;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 700;
+    }
+    table.styled-table td {
+      padding: 7px 10px;
+      border-top: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    table.styled-table tr:nth-child(even) td { background: #f8fafc; }
+
+    /* Trap Cards */
+    .traps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 10px 0 14px 0;
+      break-inside: avoid;
+    }
+    .trap-card {
+      background: linear-gradient(180deg, #fff1f2, #ffffff);
+      border: 1px solid #fda4af;
+      border-top: 4px solid #e11d48;
+      border-radius: 10px;
+      padding: 11px 12px;
+    }
+    .trap-num {
+      font-size: 10.5px;
+      font-weight: 900;
+      color: #e11d48;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .trap-h { font-size: 12.5px; font-weight: 800; color: #0f172a; margin: 3px 0 5px 0; }
+    .trap-p { font-size: 11.8px; color: #334155; margin: 0; line-height: 1.45; }
+
+    /* Roadmap 14-day */
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 10px 0 14px 0;
+      break-inside: avoid;
+    }
+    .day-card {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      border-left: 4px solid #0d9488;
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+    .day-badge { font-weight: 800; color: #0f766e; }
+
+    /* Glossary */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px 12px;
+    }
+    .gloss-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 11.6px;
+      line-height: 1.42;
+      break-inside: avoid;
+    }
+    .gloss-item strong { color: #1e3a8a; }
+
+    /* Print Media Overrides */
+    @media print {
+      body {
+        background: #fff !important;
+        padding: 0 !important;
+        font-size: 11.5px !important;
+        line-height: 1.48 !important;
+      }
+      .print-bar { display: none !important; }
+      .sheet {
+        max-width: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .content { padding: 14px 4px 10px 4px !important; }
+      .cover { border-radius: 12px !important; padding: 28px 28px 24px 28px !important; }
+      .code-pre { font-size: 9.2px !important; line-height: 1.36 !important; padding: 9px 11px !important; }
+      .output-pre { font-size: 9.2px !important; }
+    }
+    </style>
+</head>
+<body>
+
+  <div class="print-bar">
+    <div class="print-bar-text">
+      <strong>Agentic AI 2027 Crash Course</strong> &bull; Tek Sayfa, Eksiksiz Kodlu &amp; PDF Yazdırmaya Hazır (&lt;40 A4 Sayfası)
+    </div>
+    <button class="print-btn" onclick="window.print()">PDF Olarak Kaydet / Yazdır (Ctrl+P)</button>
+  </div>
+
+  <div class="sheet">
+    <!-- COVER -->
+    <header class="cover">
+      <div class="cover-pill">Accelerated Hands-On Crash Course &bull; 2027 Edition</div>
+      <h1>Agentic AI Engineering:<br/><span>Sıfırdan Production'a Uygulamalı Kurs</span></h1>
+      <p class="cover-sub">
+        Sıfırdan başlayan <strong>Junior Developer</strong>'lar için hazırlanmış; tüm teknik kavramları İngilizce orijinalleriyle,
+        anlatımı kusursuz Türkçe ile sunan, %100 <em>Thread-Safe</em> ve hemen çalıştırılabilir 8 tam Python laboratuvarı içeren eksiksiz tek sayfa rehber.
+      </p>
+      <div class="cover-stats">
+        <div class="stat-box"><div class="stat-num">9 Modül</div><div class="stat-lbl">Modül 0 &rarr; Capstone Proje</div></div>
+        <div class="stat-box"><div class="stat-num">8 Tam Lab</div><div class="stat-lbl">Eksiksiz, Test Edilmiş Kod</div></div>
+        <div class="stat-box"><div class="stat-num">33 Terim</div><div class="stat-lbl">Master Glossary &amp; Kartlar</div></div>
+        <div class="stat-box"><div class="stat-num">&lt; 40 Sayfa</div><div class="stat-lbl">A4 Renkli PDF Uyumlu</div></div>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- TOC -->
+      <nav class="toc-card">
+        <div class="toc-title">Müfredat Haritası (İçindekiler)</div>
+        <div class="toc-grid">
+          <a class="toc-item" href="#mod0"><span class="toc-dot" style="background:var(--c0);">0</span>Kurulum ve Zihinsel Model (Setup &amp; Mental Model)</a>
+          <a class="toc-item" href="#mod1"><span class="toc-dot" style="background:var(--c1);">1</span>LLM Engineering &amp; Structured Outputs</a>
+          <a class="toc-item" href="#mod2"><span class="toc-dot" style="background:var(--c2);">2</span>Tool Use, Function Calling &amp; Agent Loop</a>
+          <a class="toc-item" href="#mod3"><span class="toc-dot" style="background:var(--c3);">3</span>Agent Memory &amp; State Management</a>
+          <a class="toc-item" href="#mod4"><span class="toc-dot" style="background:var(--c4);">4</span>RAG, Vector Databases &amp; Agentic RAG</a>
+          <a class="toc-item" href="#mod5"><span class="toc-dot" style="background:var(--c5);">5</span>Model Context Protocol (MCP)</a>
+          <a class="toc-item" href="#mod6"><span class="toc-dot" style="background:var(--c6);">6</span>Planning &amp; Multi-Agent Orchestration</a>
+          <a class="toc-item" href="#mod7"><span class="toc-dot" style="background:var(--c7);">7</span>Production-Ready Engineering &amp; 3 Kritik Tuzak</a>
+          <a class="toc-item" href="#mod8"><span class="toc-dot" style="background:var(--c8);">8</span>Capstone Mini-Project &amp; 14 Günlük Plan</a>
+          <a class="toc-item" href="#glossary"><span class="toc-dot" style="background:#1e293b;">G</span>Master Glossary (33 Kritik Terim Sözlüğü)</a>
+        </div>
+      </nav>
+
+      <!-- ================= MODÜL 0 ================= -->
+      <section class="module module-first" id="mod0">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#1d4ed8,#2563eb,#0284c7);">
+          <div>
+            <div class="mod-tag">Başlangıç &amp; Mimari Temel</div>
+            <h2>Modül 0: Kurulum ve Zihinsel Model (Setup &amp; Mental Model)</h2>
+          </div>
+          <div class="mod-num-badge">00</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c0);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Bir <strong>LLM</strong> (<em>Large Language Model</em>) API'sine soru sorup yanıt almak yalnızca birkaç satır kod sürer. Ancak gerçek bir şirkette çalışan yazılımlar tek bir soru-cevapla bitmez. Sistemin veritabanına bağlanması, konuşma geçmişini (<em>State</em>) koruması, planını güncellemesi ve hata aldığında kendini toparlaması gerekir.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          <strong>Klasik Prompt-and-Response</strong>, masasında yalnızca ansiklopedi bulunan bir danışmana benzer: tek seferde yanıt verir, telefon açamaz ve iki dakika sonra adınızı unutur. <strong>Agentic AI</strong> ise elinde telefonu, not defteri ve şirket ekranı olan bir operasyon uzmanına benzer: hedefi anlar, plan yapar, araçları kullanır, sonucu doğrular ve işi bitirip net bir rapor sunar.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c0);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">LLM (Large Language Model)</div><div class="term-desc">Çok büyük metin verileriyle eğitilmiş, metin anlama ve üretme yeteneğine sahip yapay zekâ modelidir.</div></div><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">Prompt-and-Response</div><div class="term-desc">Kullanıcının modele tek bir girdi (Prompt) gönderip tek bir yanıt aldığı statik etkileşim biçimidir.</div></div><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">Agentic AI</div><div class="term-desc">Hedefe ulaşmak için plan yapan, harici araçlar (Tools) çağıran, bellek tutan ve adım adım ilerleyen sistem mimarisidir.</div></div><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">Production</div><div class="term-desc">Yazılımın geliştirici bilgisayarından çıkıp gerçek kullanıcıların hizmetine sunulduğu canlı çalışma ortamıdır.</div></div><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">Virtual Environment (venv)</div><div class="term-desc">Python projelerinin kütüphanelerini birbirinden izole eden, sürüm çakışmalarını önleyen sanal ortamdır.</div></div><div class="term-card" style="border-left-color:var(--c0);"><div class="term-title" style="color:var(--c0);">Thread-Safety</div><div class="term-desc">Birden fazla Thread aynı anda aynı koda eriştiğinde verinin bozulmaması ve sistemin tutarlı kalmasıdır.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c0);">3</span> Adım Adım Teknik Anlatım</h3>
+        <p>Unutmayın: <strong>Agent sihirli bir model türü değildir.</strong> <em>Agent</em>, bir <em>LLM</em>'in etrafına kontrollü bir döngü (<em>Agent Loop</em>), bellek (<em>State</em>) ve araç erişimi (<em>Tool Use</em>) eklenerek kurulan bir <strong>Software Architecture</strong> desenidir.</p>
+        <div class="diagram-box">
+          <div class="diagram-caption">Mimari Karşılaştırma: Klasik LLM vs. Agentic AI Döngüsü</div>
+          <div class="flow-row">
+            <span class="f-node-light">KLASİK:</span>
+            <span class="f-node" style="background:#64748b;">Kullanıcı Prompt</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#475569;">LLM</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#334155;">Tek Cevap (Bitiş)</span>
+          </div>
+          <div class="flow-row">
+            <span class="f-node-light">AGENTIC:</span>
+            <span class="f-node" style="background:var(--c0);">Hedef</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:var(--c1);">1. Planning</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:var(--c3);">2. Memory &amp; State</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:var(--c2);">3. Tool / MCP / RAG</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:var(--c4);">4. Observe &amp; Loop</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#059669;">Nihai Yanıt</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c0);">4</span> Hands-On Lab (PowerShell Ortam Kurulumu)</h3>
+        <div class="code-card">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div class="code-title">Modül 0 Kurulum Komutları &mdash; <code>PowerShell</code></div>
+            <div class="code-badge">Zero API Key Required</div>
+          </div>
+          <pre class="code-pre"><code># 1. Kurs klasörüne geçin
+cd c:\Users\isa\medium\agentic-ai-crash-course-2027
+
+# 2. İzole Python Virtual Environment oluşturun ve aktif edin
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 3. Python sürümünü doğrulayın (3.10+ olmalı)
+python --version
+
+# 4. (Opsiyonel) Gerçek API anahtarlarınız için şablonu kopyalayın
+Copy-Item .env.example .env</code></pre>
+          <div class="output-box">
+            <div class="output-label">BEKLENEN ÇIKTI</div>
+            <pre class="output-pre">Python 3.11.x (veya 3.10+ herhangi bir sürüm)</pre>
+          </div>
+        </div>
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls (Sık Hatalar)</div>
+            <ul>
+              <li><code>venv</code> açmadan tüm paketleri sistem Python'ına kurup sürüm çakışması yaşamak.</li>
+              <li><em>API Key</em> bilgisini <code>.py</code> dosyasına düz metin yazıp GitHub'a göndermek.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge (Pratik Görev)</div>
+            <p><code>.env.example</code> dosyasına <code>APP_ENV=development</code> satırını ekleyin ve Python ile <code>os.getenv("APP_ENV", "local")</code> değerini okuyup doğrulayın.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 1 ================= -->
+      <section class="module" id="mod1">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#6d28d9,#7c3aed,#9333ea);">
+          <div>
+            <div class="mod-tag">Motoru Kontrol Etmek</div>
+            <h2>Modül 1: LLM Engineering &amp; Structured Outputs</h2>
+          </div>
+          <div class="mod-num-badge">01</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c1);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Bir <em>Agent</em> inşa etmeden önce onun çekirdeği olan <em>LLM</em>'i öngörülebilir biçimde yönetmeyi öğrenmeliyiz. Yazılımda serbest metinle işlem yapmak kırılganlık yaratır. Örneğin bir destek biletini otomatik yönlendirecekseniz kodunuzun net, doğrulanmış bir JSON nesnesine ihtiyacı vardır.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          Müşteri restoranda siparişi ne kadar dağınık anlatırsa anlatsın, garson mutfağa <strong>standart bir sipariş fişi</strong> verir. <strong>Structured Outputs</strong> da dağınık insan dilini yazılımın güvenle işleyeceği standart veri sözleşmesine (<em>Schema</em>) dönüştürür.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c1);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">Tokenization</div><div class="term-desc">Metnin LLM tarafından işlenebilmesi için küçük parçalara (Token) bölünmesidir. Maliyet ve hız sınırları Token üzerinden ölçülür.</div></div><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">Context Window</div><div class="term-desc">Modelin tek bir istekte hafızasında tutabileceği maksimum Token kapasitesidir (girdi + çıktı toplamı).</div></div><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">System Prompt</div><div class="term-desc">Modele rolünü, kurallarını, sınırlarını ve çıktı biçimini öğreten en yüksek öncelikli yönergedir.</div></div><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">Temperature</div><div class="term-desc">Modelin yaratıcılık/rastgelelik düzeyidir. Mühendislik ve JSON görevlerinde tutarlılık için 0.0 kullanılır.</div></div><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">Structured Outputs</div><div class="term-desc">Modelin serbest metin yerine önceden tanımlanmış bir JSON şemasına birebir uyan çıktı üretmesidir.</div></div><div class="term-card" style="border-left-color:var(--c1);"><div class="term-title" style="color:var(--c1);">Immutable Dataclass</div><div class="term-desc">Oluşturulduktan sonra değiştirilemeyen (frozen=True) veri yapısıdır; çoklu Thread erişiminde %100 güvenlidir.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c1);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">4 Aşamalı Güvenli LLM Çağrı Hattı</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c1);">1. Token Bütçe Kontrolü</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#6366f1;">2. System Prompt + Temp=0.0</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0ea5e9;">3. LLM JSON Çıktısı</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#059669;">4. Schema Validation</span>
+          </div>
+        </div>
+        <p>Kodda <code>re.compile(...)</code> desenini modül başında bir kez derleyerek gereksiz CPU yükünü engelleriz (<em>High Efficiency</em>). <code>LLMRequestConfig</code> sınıfını <code>frozen=True, slots=True</code> yaparak hem bellek kullanımını azaltır hem de <em>Thread-Safety</em> sağlarız.</p>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c1);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">Structured Outputs &amp; Token Budget Lab &mdash; <code>labs/mod01_structured_llm.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 1 Hands-On Lab: LLM Engineering Temelleri
+- Tokenization tahminleyici (precompiled regex ile yüksek performans)
+- Context Window bütçe kontrolü
+- Structured Outputs (JSON Schema doğrulama)
+- %100 Thread-Safe tasarım (immutable dataclass &amp; zero global mutable state)
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> json
+<span class="tok-keyword">import</span> re
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any
+
+<span class="tok-comment"># Regex desenini uygulama başında bir kez derliyoruz (High Efficiency).</span>
+_WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</span>, re.UNICODE)
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> LLMRequestConfig:
+    <span class="tok-docstring">&quot;&quot;&quot;Değiştirilemez (Immutable) LLM yapılandırması. Thread-Safe&#x27;tir.&quot;&quot;&quot;</span>
+
+    model: <span class="tok-builtin">str</span> = <span class="tok-string">&quot;gpt-4o-mini&quot;</span>
+    temperature: <span class="tok-builtin">float</span> = <span class="tok-number">0.0</span>  <span class="tok-comment"># Deterministik çıktı için 0.0</span>
+    max_context_tokens: <span class="tok-builtin">int</span> = <span class="tok-number">4096</span>
+    system_prompt: <span class="tok-builtin">str</span> = (
+        <span class="tok-string">&quot;Sen bir destek bileti (Support Ticket) sınıflandırma uzmanısın. &quot;</span>
+        <span class="tok-string">&quot;Yalnızca geçerli JSON döndür.&quot;</span>
+    )
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> TicketClassification:
+    <span class="tok-docstring">&quot;&quot;&quot;Structured Output sözleşmesi (Schema).&quot;&quot;&quot;</span>
+
+    category: <span class="tok-builtin">str</span>
+    priority: <span class="tok-builtin">str</span>
+    summary: <span class="tok-builtin">str</span>
+
+
+<span class="tok-keyword">def</span> estimate_tokens(text: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">int</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;Basit ve hızlı bir Token sayısı tahminleyicisi.&quot;&quot;&quot;</span>
+    parts = _WORD_PATTERN.findall(text)
+    <span class="tok-comment"># Türkçe ve karma metinlerde ortalama 1.3 token/parça güvenli bir yaklaşımdır.</span>
+    <span class="tok-keyword">return</span> <span class="tok-builtin">max</span>(<span class="tok-number">1</span>, <span class="tok-builtin">int</span>(<span class="tok-builtin">len</span>(parts) * <span class="tok-number">1.3</span>))
+
+
+<span class="tok-keyword">def</span> validate_ticket_schema(raw_json: <span class="tok-builtin">str</span>) -&gt; TicketClassification:
+    <span class="tok-docstring">&quot;&quot;&quot;LLM çıktısını katı kurallarla doğrular (Schema Validation).&quot;&quot;&quot;</span>
+    data: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any] = json.loads(raw_json)
+    allowed_categories = {<span class="tok-string">&quot;billing&quot;</span>, <span class="tok-string">&quot;technical&quot;</span>, <span class="tok-string">&quot;account&quot;</span>}
+    allowed_priorities = {<span class="tok-string">&quot;low&quot;</span>, <span class="tok-string">&quot;medium&quot;</span>, <span class="tok-string">&quot;high&quot;</span>}
+
+    category = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;category&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).lower()
+    priority = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;priority&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).lower()
+    summary = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;summary&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).strip()
+
+    <span class="tok-keyword">if</span> category <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> allowed_categories:
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">ValueError</span>(<span class="tok-string">f&quot;Geçersiz category: {category}&quot;</span>)
+    <span class="tok-keyword">if</span> priority <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> allowed_priorities:
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">ValueError</span>(<span class="tok-string">f&quot;Geçersiz priority: {priority}&quot;</span>)
+    <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> summary:
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">ValueError</span>(<span class="tok-string">&quot;summary alanı boş olamaz.&quot;</span>)
+
+    <span class="tok-keyword">return</span> TicketClassification(category=category, priority=priority, summary=summary)
+
+
+<span class="tok-keyword">def</span> mock_structured_llm_call(user_message: <span class="tok-builtin">str</span>, config: LLMRequestConfig) -&gt; <span class="tok-builtin">str</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;
+    Harici API anahtarı olmadan Structured Outputs akışını test etmek için
+    yerel deterministik simülatör. Gerçek projede burada OpenAI SDK çağrılır.
+    &quot;&quot;&quot;</span>
+    total_tokens = estimate_tokens(config.system_prompt) + estimate_tokens(user_message)
+    <span class="tok-keyword">if</span> total_tokens &gt; config.max_context_tokens:
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">OverflowError</span>(
+            <span class="tok-string">f&quot;Context Window aşıldı! ({total_tokens} &gt; {config.max_context_tokens})&quot;</span>
+        )
+
+    lowered = user_message.lower()
+    <span class="tok-keyword">if</span> <span class="tok-string">&quot;fatura&quot;</span> <span class="tok-keyword">in</span> lowered <span class="tok-keyword">or</span> <span class="tok-string">&quot;ödeme&quot;</span> <span class="tok-keyword">in</span> lowered:
+        payload = {
+            <span class="tok-string">&quot;category&quot;</span>: <span class="tok-string">&quot;billing&quot;</span>,
+            <span class="tok-string">&quot;priority&quot;</span>: <span class="tok-string">&quot;high&quot;</span>,
+            <span class="tok-string">&quot;summary&quot;</span>: <span class="tok-string">&quot;Kullanıcı ödeme veya fatura sorunu bildiriyor.&quot;</span>,
+        }
+    <span class="tok-keyword">elif</span> <span class="tok-string">&quot;şifre&quot;</span> <span class="tok-keyword">in</span> lowered <span class="tok-keyword">or</span> <span class="tok-string">&quot;giriş&quot;</span> <span class="tok-keyword">in</span> lowered:
+        payload = {
+            <span class="tok-string">&quot;category&quot;</span>: <span class="tok-string">&quot;account&quot;</span>,
+            <span class="tok-string">&quot;priority&quot;</span>: <span class="tok-string">&quot;medium&quot;</span>,
+            <span class="tok-string">&quot;summary&quot;</span>: <span class="tok-string">&quot;Kullanıcı hesap erişim problemi yaşıyor.&quot;</span>,
+        }
+    <span class="tok-keyword">else</span>:
+        payload = {
+            <span class="tok-string">&quot;category&quot;</span>: <span class="tok-string">&quot;technical&quot;</span>,
+            <span class="tok-string">&quot;priority&quot;</span>: <span class="tok-string">&quot;low&quot;</span>,
+            <span class="tok-string">&quot;summary&quot;</span>: <span class="tok-string">&quot;Genel teknik destek talebi.&quot;</span>,
+        }
+
+    <span class="tok-keyword">return</span> json.dumps(payload, ensure_ascii=<span class="tok-keyword">False</span>)
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    config = LLMRequestConfig(temperature=<span class="tok-number">0.0</span>)
+    user_ticket = <span class="tok-string">&quot;Kredi kartımdan bu ay iki kez fatura çekilmiş, acil kontrol eder misiniz?&quot;</span>
+
+    raw_output = mock_structured_llm_call(user_ticket, config)
+    validated = validate_ticket_schema(raw_output)
+
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Ham JSON Çıktısı:&quot;</span>, raw_output)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Doğrulanmış Nesne:&quot;</span>, validated)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Tahmini Token Sayısı:&quot;</span>, estimate_tokens(user_ticket))
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod01_structured_llm.py</code>)</div>
+        <pre class="output-pre">Ham JSON Çıktısı: {&quot;category&quot;: &quot;billing&quot;, &quot;priority&quot;: &quot;high&quot;, &quot;summary&quot;: &quot;Kullanıcı ödeme veya fatura sorunu bildiriyor.&quot;}
+Doğrulanmış Nesne: TicketClassification(category=&#x27;billing&#x27;, priority=&#x27;high&#x27;, summary=&#x27;Kullanıcı ödeme veya fatura sorunu bildiriyor.&#x27;)
+Tahmini Token Sayısı: 18</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li>LLM'den dönen JSON'ı doğrulama (<em>Schema Validation</em>) yapmadan doğrudan veritabanına yazmak.</li>
+              <li>Türkçe metinlerde <code>1 kelime = 1 token</code> varsaymak (eklemeli dillerde katsayı ~1.3'tür).</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>allowed_categories</code> kümesine <code>"refund"</code> kategorisini ekleyin ve <em>"Ürünü iade etmek istiyorum"</em> metni için yeni kural yazıp testi tekrar çalıştırın.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 2 ================= -->
+      <section class="module" id="mod2">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#0e7490,#0891b2,#06b6d4);">
+          <div>
+            <div class="mod-tag">Modele Eller ve Gözler Kazandırmak</div>
+            <h2>Modül 2: Tool Use, Function Calling &amp; Agent Loop</h2>
+          </div>
+          <div class="mod-num-badge">02</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c2);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Bir <em>LLM</em>, şirketinizin canlı veritabanındaki sipariş durumunu göremez ve kesin finansal hesaplamalarda hata yapabilir. <strong>Tool Use</strong> sayesinde model tahminde bulunmak yerine sizin yazdığınız güvenilir Python fonksiyonunu çağırır ve gerçek veriyi kullanarak yanıt üretir.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          Bir pilot uçağın yüksekliğini göz kararı tahmin etmez; kokpitteki altimetre aracına bakar ve kesin veriyi okur. <strong>Tool</strong>, <em>LLM</em>'in güvenilir kokpit göstergesidir.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c2);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c2);"><div class="term-title" style="color:var(--c2);">Tool</div><div class="term-desc">Agent'ın dış dünyayla etkileşime girmek veya kesin işlem yapmak için çağırdığı Python fonksiyonu veya API aracıdır.</div></div><div class="term-card" style="border-left-color:var(--c2);"><div class="term-title" style="color:var(--c2);">Function Calling</div><div class="term-desc">LLM'in serbest metin yerine hangi fonksiyonu hangi parametrelerle çağırmak istediğini yapılandırılmış biçimde bildirmesidir.</div></div><div class="term-card" style="border-left-color:var(--c2);"><div class="term-title" style="color:var(--c2);">Agent Loop (Think-Act-Observe)</div><div class="term-desc">Agent'ın düşünüp araç çağırdığı, sonucu gözlemlediği ve hedefe ulaşana kadar tekrarladığı döngüdür.</div></div><div class="term-card" style="border-left-color:var(--c2);"><div class="term-title" style="color:var(--c2);">Max Steps</div><div class="term-desc">Agent'ın sonsuz döngüye girip API bütçenizi tüketmesini önleyen zorunlu maksimum adım sınırıdır.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c2);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">Think &rarr; Act &rarr; Observe Döngüsü (LLM Kodu Çalıştırmaz, Uygulamanız Çalıştırır!)</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c2);">1. THINK (Hangi Tool?)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0284c7;">2. ACT (ToolRegistry.execute)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#059669;">3. OBSERVE (JSON Sonuç)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0f172a;">4. Kullanıcıya Cevap</span>
+          </div>
+        </div>
+        <p>Dikkat edilmesi gereken <em>Concurrency</em> detayı: <code>ThreadSafeToolRegistry.execute</code> içinde <code>self._lock</code> yalnızca aracı sözlükten okurken tutulur; araç fonksiyonu çalışırken kilit serbesttir. Böylece yavaş bir dış API çağrısı diğer kullanıcıları bloklamaz.</p>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c2);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">Thread-Safe Tool Registry &amp; Agent Loop &mdash; <code>labs/mod02_tool_use_agent.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 2 Hands-On Lab: Tool Use, Function Calling ve Güvenli Agent Loop
+- Thread-Safe ToolRegistry (RLock korumalı)
+- Max-Steps koruması (Sonsuz döngü önleme)
+- Hata yakalama ve güvenli Tool çağrısı
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any, Callable
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> ToolDefinition:
+    name: <span class="tok-builtin">str</span>
+    description: <span class="tok-builtin">str</span>
+    handler: Callable[..., <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]
+
+
+<span class="tok-keyword">class</span> ThreadSafeToolRegistry:
+    <span class="tok-docstring">&quot;&quot;&quot;Birden fazla Thread aynı anda erişse bile güvenli kalan Tool kayıt defteri.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._tools: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, ToolDefinition] = {}
+
+    <span class="tok-keyword">def</span> register(self, tool: ToolDefinition) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            self._tools[tool.name] = tool
+
+    <span class="tok-keyword">def</span> execute(self, name: <span class="tok-builtin">str</span>, **kwargs: Any) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+        <span class="tok-keyword">with</span> self._lock:
+            tool = self._tools.get(name)
+        <span class="tok-keyword">if</span> tool <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+            <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">False</span>, <span class="tok-string">&quot;error&quot;</span>: <span class="tok-string">f&quot;Bilinmeyen tool: {name}&quot;</span>}
+        <span class="tok-keyword">try</span>:
+            <span class="tok-comment"># Tool çalışırken lock&#x27;u tutmuyoruz; böylece eşzamanlılık (Concurrency) engellenmez.</span>
+            result = tool.handler(**kwargs)
+            <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">True</span>, <span class="tok-string">&quot;data&quot;</span>: result}
+        <span class="tok-keyword">except</span> <span class="tok-builtin">Exception</span> <span class="tok-keyword">as</span> exc:
+            <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">False</span>, <span class="tok-string">&quot;error&quot;</span>: <span class="tok-builtin">str</span>(exc)}
+
+
+<span class="tok-keyword">def</span> get_order_status(order_id: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+    <span class="tok-docstring">&quot;&quot;&quot;Örnek dış servis aracı (Tool): Sipariş durumunu sorgular.&quot;&quot;&quot;</span>
+    fake_db = {
+        <span class="tok-string">&quot;ORD-101&quot;</span>: {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;Kargoda&quot;</span>, <span class="tok-string">&quot;eta_days&quot;</span>: <span class="tok-number">2</span>},
+        <span class="tok-string">&quot;ORD-202&quot;</span>: {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;Teslim Edildi&quot;</span>, <span class="tok-string">&quot;eta_days&quot;</span>: <span class="tok-number">0</span>},
+    }
+    <span class="tok-keyword">if</span> order_id <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> fake_db:
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">KeyError</span>(<span class="tok-string">f&quot;Sipariş bulunamadı: {order_id}&quot;</span>)
+    <span class="tok-keyword">return</span> fake_db[order_id]
+
+
+<span class="tok-keyword">def</span> calculate_shipping_discount(order_total: <span class="tok-builtin">float</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+    <span class="tok-docstring">&quot;&quot;&quot;Örnek hesaplama aracı (Tool): Kargo indirimini kesin matematikle hesaplar.&quot;&quot;&quot;</span>
+    free_shipping = order_total &gt;= <span class="tok-number">500.0</span>
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;free_shipping&quot;</span>: free_shipping, <span class="tok-string">&quot;shipping_fee&quot;</span>: <span class="tok-number">0.0</span> <span class="tok-keyword">if</span> free_shipping <span class="tok-keyword">else</span> <span class="tok-number">49.90</span>}
+
+
+<span class="tok-keyword">def</span> run_agent_loop(user_query: <span class="tok-builtin">str</span>, registry: ThreadSafeToolRegistry, max_steps: <span class="tok-builtin">int</span> = <span class="tok-number">3</span>) -&gt; <span class="tok-builtin">str</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;Basitleştirilmiş Think -&gt; Act -&gt; Observe Agent Loop.&quot;&quot;&quot;</span>
+    observations: <span class="tok-builtin">list</span>[<span class="tok-builtin">str</span>] = []
+
+    <span class="tok-keyword">for</span> step <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, max_steps + <span class="tok-number">1</span>):
+        <span class="tok-comment"># 1. THINK: Hangi Tool çağrılmalı?</span>
+        <span class="tok-keyword">if</span> <span class="tok-string">&quot;ORD-&quot;</span> <span class="tok-keyword">in</span> user_query <span class="tok-keyword">and</span> <span class="tok-keyword">not</span> observations:
+            order_id = <span class="tok-builtin">next</span>(word.strip(<span class="tok-string">&quot;.,?!&quot;</span>) <span class="tok-keyword">for</span> word <span class="tok-keyword">in</span> user_query.split() <span class="tok-keyword">if</span> word.startswith(<span class="tok-string">&quot;ORD-&quot;</span>))
+            <span class="tok-comment"># 2. ACT: Tool&#x27;u çağır</span>
+            tool_result = registry.execute(<span class="tok-string">&quot;get_order_status&quot;</span>, order_id=order_id)
+            <span class="tok-comment"># 3. OBSERVE: Sonucu kaydet</span>
+            observations.append(<span class="tok-string">f&quot;Adım {step} [get_order_status]: {tool_result}&quot;</span>)
+            <span class="tok-keyword">if</span> tool_result[<span class="tok-string">&quot;ok&quot;</span>]:
+                info = tool_result[<span class="tok-string">&quot;data&quot;</span>]
+                <span class="tok-keyword">return</span> (
+                    <span class="tok-string">f&quot;Siparişiniz ({order_id}) şu an &#x27;{info[&#x27;status&#x27;]}&#x27; durumunda. &quot;</span>
+                    <span class="tok-string">f&quot;Tahmini teslimat: {info[&#x27;eta_days&#x27;]} gün.&quot;</span>
+                )
+            <span class="tok-keyword">return</span> <span class="tok-string">f&quot;Sipariş sorgulanamadı: {tool_result[&#x27;error&#x27;]}&quot;</span>
+
+        <span class="tok-keyword">if</span> <span class="tok-string">&quot;kargo&quot;</span> <span class="tok-keyword">in</span> user_query.lower():
+            tool_result = registry.execute(<span class="tok-string">&quot;calculate_shipping_discount&quot;</span>, order_total=<span class="tok-number">650.0</span>)
+            <span class="tok-keyword">return</span> <span class="tok-string">f&quot;Kargo hesaplaması tamamlandı: {tool_result[&#x27;data&#x27;]}&quot;</span>
+
+    <span class="tok-keyword">return</span> <span class="tok-string">&quot;Maksimum adım sayısına (max_steps) ulaşıldı; işlem güvenli şekilde durduruldu.&quot;</span>
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    registry = ThreadSafeToolRegistry()
+    registry.register(ToolDefinition(<span class="tok-string">&quot;get_order_status&quot;</span>, <span class="tok-string">&quot;Sipariş durumunu getirir&quot;</span>, get_order_status))
+    registry.register(
+        ToolDefinition(<span class="tok-string">&quot;calculate_shipping_discount&quot;</span>, <span class="tok-string">&quot;Kargo ücretini hesaplar&quot;</span>, calculate_shipping_discount)
+    )
+
+    <span class="tok-builtin">print</span>(run_agent_loop(<span class="tok-string">&quot;Merhaba, ORD-101 numaralı siparişim nerede?&quot;</span>, registry))
+    <span class="tok-builtin">print</span>(run_agent_loop(<span class="tok-string">&quot;650 TL alışverişte kargo ücreti ne kadar?&quot;</span>, registry))
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod02_tool_use_agent.py</code>)</div>
+        <pre class="output-pre">Siparişiniz (ORD-101) şu an &#x27;Kargoda&#x27; durumunda. Tahmini teslimat: 2 gün.
+Kargo hesaplaması tamamlandı: {&#x27;free_shipping&#x27;: True, &#x27;shipping_fee&#x27;: 0.0}</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li><em>Agent Loop</em> içine <code>max_steps</code> sınırı koymamak (sonsuz döngü ve maliyet riski).</li>
+              <li>Araç içinde oluşan hatayı yakalamayıp (<code>try/except</code>) tüm uygulamayı çökertmek.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>cancel_order(order_id)</code> aracını yazın. Sipariş durumu <code>"Teslim Edildi"</code> ise iptali reddeden güvenli kuralı <code>ThreadSafeToolRegistry</code> içine kaydedin.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 3 ================= -->
+      <section class="module" id="mod3">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#047857,#059669,#10b981);">
+          <div>
+            <div class="mod-tag">Unutmayan ve Karıştırmayan Sistemler</div>
+            <h2>Modül 3: Agent Memory &amp; State Management</h2>
+          </div>
+          <div class="mod-num-badge">03</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c3);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p><em>LLM</em> API'leri doğası gereği <strong>Stateless</strong> çalışır; her yeni istekte bir önceki mesajınızı unutur. Tutarlı bir asistan oluşturmak için hem son konuşmaları (<em>Short-Term Memory</em>) hem de kalıcı kullanıcı tercihlerini (<em>Long-Term Memory</em>) kullanıcı bazlı izole biçimde yönetmeliyiz.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          Bir doktor her hastanın geçmişini ezberlemez. Masadaki güncel muayene notlarını (<strong>Short-Term Memory</strong>) ve hastanın kronik alerjilerinin yazılı olduğu dosyayı (<strong>Long-Term Memory</strong>) birlikte kullanır.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c3);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">Stateless</div><div class="term-desc">Önceki isteklerin bilgisini otomatik olarak saklamayan sistem özelliğidir.</div></div><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">Short-Term Memory</div><div class="term-desc">Aktif konuşma penceresindeki son N mesajı tutan kısa süreli bellektir.</div></div><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">Long-Term Memory</div><div class="term-desc">Oturumlar kapansa bile saklanan kullanıcı tercihleri ve kalıcı gerçeklerdir.</div></div><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">Bounded Memory (deque)</div><div class="term-desc">RAM sızıntısını ve Context Window aşımını önlemek için en eski mesajları otomatik düşüren sabit boyutlu kuyruktur.</div></div><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">Session Isolation</div><div class="term-desc">Farklı kullanıcıların konuşma verilerinin birbirine kesinlikle karışmamasını sağlayan oturum ayrımıdır.</div></div><div class="term-card" style="border-left-color:var(--c3);"><div class="term-title" style="color:var(--c3);">State Snapshot</div><div class="term-desc">İç durumu korumak için dışarıya orijinal referans yerine güvenli kopya döndürme desenidir.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c3);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">Session İzolasyonlu &amp; Sınırlı Bellek Mimarisi</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c3);">Session ID: user-01</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0f766e;">RLock Koruması</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node-light">Short-Term: deque(maxlen=4)</span><span class="f-arrow">+</span>
+            <span class="f-node-light">Long-Term: dict</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0f172a;">Güvenli Snapshot</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c3);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">Thread-Safe Memory &amp; State Manager &mdash; <code>labs/mod03_memory_and_state.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 3 Hands-On Lab: Agent Memory &amp; State Management
+- Bounded Short-Term Memory (deque(maxlen=N) ile bellek sızıntısı önlenir)
+- Session bazlı izole State Store (Thread-Safe RLock)
+- Long-Term Memory (kalıcı kullanıcı tercihleri)
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">deque</span>
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">field</span>
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> Message:
+    role: <span class="tok-builtin">str</span>
+    content: <span class="tok-builtin">str</span>
+
+
+<span class="tok-decorator">@dataclass</span>(slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> SessionState:
+    session_id: <span class="tok-builtin">str</span>
+    short_term: <span class="tok-builtin">deque</span>[Message] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-keyword">lambda</span>: <span class="tok-builtin">deque</span>(maxlen=<span class="tok-number">6</span>))
+    long_term_facts: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">str</span>] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-builtin">dict</span>)
+
+
+<span class="tok-keyword">class</span> ThreadSafeMemoryManager:
+    <span class="tok-docstring">&quot;&quot;&quot;Her kullanıcı oturumu (Session) için izole ve Thread-Safe bellek yöneticisi.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self, max_short_term_messages: <span class="tok-builtin">int</span> = <span class="tok-number">6</span>) -&gt; <span class="tok-keyword">None</span>:
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._max_messages = max_short_term_messages
+        self._sessions: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, SessionState] = {}
+
+    <span class="tok-keyword">def</span> _get_or_create(self, session_id: <span class="tok-builtin">str</span>) -&gt; SessionState:
+        state = self._sessions.get(session_id)
+        <span class="tok-keyword">if</span> state <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+            state = SessionState(
+                session_id=session_id,
+                short_term=<span class="tok-builtin">deque</span>(maxlen=self._max_messages),
+            )
+            self._sessions[session_id] = state
+        <span class="tok-keyword">return</span> state
+
+    <span class="tok-keyword">def</span> add_message(self, session_id: <span class="tok-builtin">str</span>, role: <span class="tok-builtin">str</span>, content: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            state = self._get_or_create(session_id)
+            state.short_term.append(Message(role=role, content=content))
+
+    <span class="tok-keyword">def</span> save_long_term_fact(self, session_id: <span class="tok-builtin">str</span>, key: <span class="tok-builtin">str</span>, value: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            state = self._get_or_create(session_id)
+            state.long_term_facts[key] = value
+
+    <span class="tok-keyword">def</span> build_context_snapshot(self, session_id: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">object</span>]:
+        <span class="tok-docstring">&quot;&quot;&quot;Dışarıya kopya (snapshot) döndürür; böylece dış kod iç state&#x27;i bozamaz.&quot;&quot;&quot;</span>
+        <span class="tok-keyword">with</span> self._lock:
+            state = self._get_or_create(session_id)
+            <span class="tok-keyword">return</span> {
+                <span class="tok-string">&quot;session_id&quot;</span>: state.session_id,
+                <span class="tok-string">&quot;long_term_facts&quot;</span>: <span class="tok-builtin">dict</span>(state.long_term_facts),
+                <span class="tok-string">&quot;recent_messages&quot;</span>: <span class="tok-builtin">list</span>(state.short_term),
+            }
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    memory = ThreadSafeMemoryManager(max_short_term_messages=<span class="tok-number">4</span>)
+    session = <span class="tok-string">&quot;user-junior-01&quot;</span>
+
+    memory.save_long_term_fact(session, <span class="tok-string">&quot;preferred_language&quot;</span>, <span class="tok-string">&quot;Python&quot;</span>)
+    memory.save_long_term_fact(session, <span class="tok-string">&quot;experience_level&quot;</span>, <span class="tok-string">&quot;Junior&quot;</span>)
+
+    <span class="tok-keyword">for</span> i <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, <span class="tok-number">7</span>):
+        memory.add_message(session, <span class="tok-string">&quot;user&quot;</span>, <span class="tok-string">f&quot;Soru {i}: Agent Memory nasıl çalışır?&quot;</span>)
+
+    snapshot = memory.build_context_snapshot(session)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Long-Term Facts:&quot;</span>, snapshot[<span class="tok-string">&quot;long_term_facts&quot;</span>])
+    <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;Short-Term Mesaj Sayısı (maxlen=4): {len(snapshot[&#x27;recent_messages&#x27;])}&quot;</span>)
+    <span class="tok-keyword">for</span> msg <span class="tok-keyword">in</span> snapshot[<span class="tok-string">&quot;recent_messages&quot;</span>]:
+        <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;  - [{msg.role}] {msg.content}&quot;</span>)
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod03_memory_and_state.py</code>)</div>
+        <pre class="output-pre">Long-Term Facts: {&#x27;preferred_language&#x27;: &#x27;Python&#x27;, &#x27;experience_level&#x27;: &#x27;Junior&#x27;}
+Short-Term Mesaj Sayısı (maxlen=4): 4
+  - [user] Soru 3: Agent Memory nasıl çalışır?
+  - [user] Soru 4: Agent Memory nasıl çalışır?
+  - [user] Soru 5: Agent Memory nasıl çalışır?
+  - [user] Soru 6: Agent Memory nasıl çalışır?</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li>Tüm kullanıcıların mesajlarını tek bir global Python listesinde tutup veri sızıntısına yol açmak.</li>
+              <li>Sınırsız mesaj biriktirerek hem RAM'i şişirmek hem de <em>Context Rot</em> (dikkat dağılması) yaşamak.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>ThreadSafeMemoryManager</code> içine yalnızca <code>short_term</code> kuyruğunu temizleyen ama <code>long_term_facts</code> verisini koruyan <code>clear_short_term(session_id)</code> metodunu ekleyin.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 4 ================= -->
+      <section class="module" id="mod4">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#b45309,#d97706,#f59e0b);">
+          <div>
+            <div class="mod-tag">Şirket Bilgisine Akıllı Erişim</div>
+            <h2>Modül 4: RAG, Vector Databases &amp; Agentic RAG</h2>
+          </div>
+          <div class="mod-num-badge">04</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c4);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>500 sayfalık şirket dokümanını her soruda <em>Prompt</em> içine yapıştıramazsınız. <strong>RAG</strong> (<em>Retrieval-Augmented Generation</em>), yalnızca soruyla ilgili paragrafları bulup modele verir. <strong>Agentic RAG</strong> ise ilk arama zayıf dönerse pes etmez; sorguyu yeniden yazarak (<em>Query Rewrite</em>) doğru bilgiyi yakalar.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          Açık kitap sınavında 500 sayfayı ezberlemezsiniz; içindekilerden ilgili 2 paragrafı bulup cevaplarsınız (<strong>RAG</strong>). İlk aradığınız kelimeyi bulamazsanız eş anlamlısıyla tekrar ararsınız (<strong>Agentic RAG</strong>).
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c4);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c4);"><div class="term-title" style="color:var(--c4);">RAG</div><div class="term-desc">LLM'in yanıt üretmeden önce harici bir bilgi tabanından ilgili metin parçalarını çekip bağlama eklemesidir.</div></div><div class="term-card" style="border-left-color:var(--c4);"><div class="term-title" style="color:var(--c4);">Chunking</div><div class="term-desc">Uzun dokümanların arama motorunun verimli bulabileceği küçük ve anlamlı parçalara (Chunk) bölünmesidir.</div></div><div class="term-card" style="border-left-color:var(--c4);"><div class="term-title" style="color:var(--c4);">Embeddings &amp; Vector DB</div><div class="term-desc">Metinleri anlamsal sayısal vektörlere çeviren yapı ve bu vektörlerde hızlı arama yapan özel veritabanıdır.</div></div><div class="term-card" style="border-left-color:var(--c4);"><div class="term-title" style="color:var(--c4);">Agentic RAG &amp; Query Rewrite</div><div class="term-desc">İlk arama skoru düşükse sorguyu otomatik iyileştirip tekrar arama yapan akıllı RAG döngüsüdür.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c4);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">Agentic RAG Karar Döngüsü</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c4);">Kullanıcı Sorusu</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#ea580c;">Vector Search</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node-light">Skor &ge; 0.25?</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#059669;">EVET: Cevapla</span>
+            <span class="f-arrow">|</span>
+            <span class="f-node" style="background:#dc2626;">HAYIR: Query Rewrite &rarr; Tekrar Ara</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c4);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">In-Memory Vector Store &amp; Agentic RAG Query Rewrite &mdash; <code>labs/mod04_agentic_rag.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 4 Hands-On Lab: RAG, Vector Database Mantığı ve Agentic RAG
+- Chunking (metni parçalara bölme)
+- Hafif Cosine Similarity tabanlı yerel Vector Store (Thread-Safe)
+- Agentic RAG: İlk arama zayıfsa sorguyu yeniden yazıp (Query Rewrite) tekrar arama
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> math
+<span class="tok-keyword">import</span> re
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">Counter</span>
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+
+_TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİÖŞÜ0-9]+&quot;</span>)
+
+
+<span class="tok-keyword">def</span> text_to_vector(text: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]:
+    <span class="tok-docstring">&quot;&quot;&quot;Eğitim amaçlı hafif Term-Frequency vektörü. Gerçek sistemde Embedding API kullanılır.&quot;&quot;&quot;</span>
+    tokens = [t.lower() <span class="tok-keyword">for</span> t <span class="tok-keyword">in</span> _TOKEN_RE.findall(text)]
+    counts = <span class="tok-builtin">Counter</span>(tokens)
+    norm = math.sqrt(<span class="tok-builtin">sum</span>(v * v <span class="tok-keyword">for</span> v <span class="tok-keyword">in</span> counts.values())) <span class="tok-keyword">or</span> <span class="tok-number">1.0</span>
+    <span class="tok-keyword">return</span> {k: v / norm <span class="tok-keyword">for</span> k, v <span class="tok-keyword">in</span> counts.items()}
+
+
+<span class="tok-keyword">def</span> cosine_similarity(vec_a: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>], vec_b: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]) -&gt; <span class="tok-builtin">float</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;İki normalize vektör arasındaki benzerlik skoru (0.0 - 1.0).&quot;&quot;&quot;</span>
+    <span class="tok-keyword">if</span> <span class="tok-builtin">len</span>(vec_a) &gt; <span class="tok-builtin">len</span>(vec_b):
+        vec_a, vec_b = vec_b, vec_a
+    <span class="tok-keyword">return</span> <span class="tok-builtin">sum</span>(val * vec_b.get(key, <span class="tok-number">0.0</span>) <span class="tok-keyword">for</span> key, val <span class="tok-keyword">in</span> vec_a.items())
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> DocumentChunk:
+    chunk_id: <span class="tok-builtin">str</span>
+    content: <span class="tok-builtin">str</span>
+    vector: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]
+
+
+<span class="tok-keyword">class</span> ThreadSafeVectorStore:
+    <span class="tok-docstring">&quot;&quot;&quot;Bellek içi (In-Memory) Thread-Safe Vector Store.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._chunks: <span class="tok-builtin">list</span>[DocumentChunk] = []
+
+    <span class="tok-keyword">def</span> add_document(self, doc_id: <span class="tok-builtin">str</span>, text: <span class="tok-builtin">str</span>, chunk_size: <span class="tok-builtin">int</span> = <span class="tok-number">120</span>) -&gt; <span class="tok-keyword">None</span>:
+        parts = [text[i : i + chunk_size].strip() <span class="tok-keyword">for</span> i <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">0</span>, <span class="tok-builtin">len</span>(text), chunk_size)]
+        new_chunks = [
+            DocumentChunk(<span class="tok-string">f&quot;{doc_id}-{idx}&quot;</span>, part, text_to_vector(part))
+            <span class="tok-keyword">for</span> idx, part <span class="tok-keyword">in</span> <span class="tok-builtin">enumerate</span>(parts)
+            <span class="tok-keyword">if</span> part
+        ]
+        <span class="tok-keyword">with</span> self._lock:
+            self._chunks.extend(new_chunks)
+
+    <span class="tok-keyword">def</span> search(self, query: <span class="tok-builtin">str</span>, top_k: <span class="tok-builtin">int</span> = <span class="tok-number">2</span>) -&gt; <span class="tok-builtin">list</span>[<span class="tok-builtin">tuple</span>[<span class="tok-builtin">float</span>, DocumentChunk]]:
+        q_vec = text_to_vector(query)
+        <span class="tok-keyword">with</span> self._lock:
+            snapshot = <span class="tok-builtin">list</span>(self._chunks)
+        scored = [(cosine_similarity(q_vec, chunk.vector), chunk) <span class="tok-keyword">for</span> chunk <span class="tok-keyword">in</span> snapshot]
+        scored.sort(key=<span class="tok-keyword">lambda</span> item: item[<span class="tok-number">0</span>], reverse=<span class="tok-keyword">True</span>)
+        <span class="tok-keyword">return</span> scored[:top_k]
+
+
+<span class="tok-keyword">def</span> agentic_rag_search(store: ThreadSafeVectorStore, user_query: <span class="tok-builtin">str</span>, min_score: <span class="tok-builtin">float</span> = <span class="tok-number">0.25</span>) -&gt; <span class="tok-builtin">str</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;
+    Agentic RAG Döngüsü:
+    1. İlk sorguyu çalıştır.
+    2. Benzerlik skoru eşiğin altındaysa sorguyu genişlet (Query Rewrite) ve tekrar ara.
+    &quot;&quot;&quot;</span>
+    results = store.search(user_query, top_k=<span class="tok-number">1</span>)
+    <span class="tok-keyword">if</span> results <span class="tok-keyword">and</span> results[<span class="tok-number">0</span>][<span class="tok-number">0</span>] &gt;= min_score:
+        score, chunk = results[<span class="tok-number">0</span>]
+        <span class="tok-keyword">return</span> <span class="tok-string">f&quot;[İlk Aramada Bulundu | Skor: {score:.2f}] -&gt; {chunk.content}&quot;</span>
+
+    <span class="tok-comment"># Query Rewrite (Sorgu İyileştirme)</span>
+    rewritten_query = <span class="tok-string">f&quot;{user_query} iade politikası süre gün kargo&quot;</span>
+    retry_results = store.search(rewritten_query, top_k=<span class="tok-number">1</span>)
+    <span class="tok-keyword">if</span> retry_results <span class="tok-keyword">and</span> retry_results[<span class="tok-number">0</span>][<span class="tok-number">0</span>] &gt; <span class="tok-number">0.0</span>:
+        score, chunk = retry_results[<span class="tok-number">0</span>]
+        <span class="tok-keyword">return</span> (
+            <span class="tok-string">f&quot;[Agentic Query Rewrite Uygulandı | Yeni Skor: {score:.2f}] -&gt; {chunk.content}&quot;</span>
+        )
+    <span class="tok-keyword">return</span> <span class="tok-string">&quot;İlgili bilgi veri tabanında bulunamadı.&quot;</span>
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    store = ThreadSafeVectorStore()
+    store.add_document(
+        <span class="tok-string">&quot;policy&quot;</span>,
+        <span class="tok-string">&quot;Müşteriler teslimattan itibaren 14 gün içinde ücretsiz kargo ile iade politikası kapsamında ürün iade edebilir.&quot;</span>,
+    )
+    store.add_document(
+        <span class="tok-string">&quot;support&quot;</span>,
+        <span class="tok-string">&quot;Teknik destek ekibi hafta içi 09:00 - 18:00 saatleri arasında canlı sohbet hizmeti verir.&quot;</span>,
+    )
+
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Sorgu 1 (Net):&quot;</span>, agentic_rag_search(store, <span class="tok-string">&quot;iade politikası kaç gün?&quot;</span>))
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Sorgu 2 (Belirsiz):&quot;</span>, agentic_rag_search(store, <span class="tok-string">&quot;beğenmezsem geri verebilir miyim?&quot;</span>))
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod04_agentic_rag.py</code>)</div>
+        <pre class="output-pre">Sorgu 1 (Net): [İlk Aramada Bulundu | Skor: 0.49] -&gt; Müşteriler teslimattan itibaren 14 gün içinde ücretsiz kargo ile iade politikası kapsamında ürün iade edebilir.
+Sorgu 2 (Belirsiz): [Agentic Query Rewrite Uygulandı | Yeni Skor: 0.40] -&gt; Müşteriler teslimattan itibaren 14 gün içinde ücretsiz kargo ile iade politikası kapsamında ürün iade edebilir.</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li><em>Chunk</em> boyutunu çok küçük tutup bağlamı koparmak veya çok büyük tutup gürültü üretmek.</li>
+              <li>Benzerlik skorunu (<code>min_score</code>) kontrol etmeden alakasız metni modele verip halüsinasyon üretmek.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>ThreadSafeVectorStore</code> içine kargo politikası dokümanı ekleyin ve <em>"teslimat parası öder miyim?"</em> sorusuyla <em>Query Rewrite</em> adımını test edin.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 5 ================= -->
+      <section class="module" id="mod5">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#be185d,#db2777,#ec4899);">
+          <div>
+            <div class="mod-tag">Agentic AI Dünyasının USB-C Standardı</div>
+            <h2>Modül 5: Model Context Protocol (MCP)</h2>
+          </div>
+          <div class="mod-num-badge">05</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c5);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Bir şirkette 3 farklı AI uygulaması ve 5 farklı dış sistem (GitHub, Jira, Slack, SQL, Depo) olduğunda her çift için ayrı bağlantı kodu yazmak bakım kâbusudur (3 &times; 5 = 15 entegrasyon). <strong>Model Context Protocol (MCP)</strong>, bir aracı tek bir standartla sunmanızı ve tüm <em>Agent</em>'ların onu anında keşfedip kullanmasını sağlar.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          Eskiden her telefonun farklı şarj girişi vardı; bugün <strong>USB-C</strong> ile tek kablo her cihazda çalışır. <strong>MCP</strong>, yapay zekâ araçlarının USB-C standardıdır.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c5);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c5);"><div class="term-title" style="color:var(--c5);">Model Context Protocol (MCP)</div><div class="term-desc">AI uygulamalarının harici araç ve veri kaynaklarına tek bir açık standartla bağlanmasını sağlayan protokoldür.</div></div><div class="term-card" style="border-left-color:var(--c5);"><div class="term-title" style="color:var(--c5);">MCP Server</div><div class="term-desc">Araçları (Tools) ve veri kaynaklarını JSON-RPC 2.0 formatında dış dünyaya sunan servis katmanıdır.</div></div><div class="term-card" style="border-left-color:var(--c5);"><div class="term-title" style="color:var(--c5);">MCP Client</div><div class="term-desc">Agent tarafında yaşayan; sunucudan araçları keşfeden (tools/list) ve çağıran (tools/call) istemcidir.</div></div><div class="term-card" style="border-left-color:var(--c5);"><div class="term-title" style="color:var(--c5);">JSON-RPC 2.0</div><div class="term-desc">Uzaktaki fonksiyonları standart JSON mesajlarıyla çağırmak için kullanılan hafif iletişim protokolüdür.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c5);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">Standart MCP Keşif (Discovery) ve Çağrı (Execution) Akışı</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c5);">MCP Client (Agent)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node-light">1. tools/list</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#9d174d;">MCP Server</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node-light">2. tools/call (SKU)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#059669;">JSON-RPC Sonuç</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c5);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">JSON-RPC 2.0 MCP Server &amp; Client Discovery &mdash; <code>labs/mod05_mcp_client_server.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
+- JSON-RPC 2.0 tabanlı standart MCP Tool keşfi (tools/list) ve çağrısı (tools/call)
+- MCP Server ve MCP Client soyutlaması (Thread-Safe)
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> json
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any, Callable
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> MCPToolSpec:
+    name: <span class="tok-builtin">str</span>
+    description: <span class="tok-builtin">str</span>
+    input_schema: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]
+    handler: Callable[[<span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]], <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]
+
+
+<span class="tok-keyword">class</span> SimpleMCPServer:
+    <span class="tok-docstring">&quot;&quot;&quot;JSON-RPC 2.0 mesajlarını işleyen minimal, Thread-Safe MCP Server.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self, server_name: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
+        self.server_name = server_name
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._tools: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, MCPToolSpec] = {}
+
+    <span class="tok-keyword">def</span> register_tool(self, spec: MCPToolSpec) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            self._tools[spec.name] = spec
+
+    <span class="tok-keyword">def</span> handle_json_rpc(self, raw_request: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">str</span>:
+        req = json.loads(raw_request)
+        req_id = req.get(<span class="tok-string">&quot;id&quot;</span>)
+        method = req.get(<span class="tok-string">&quot;method&quot;</span>)
+        params = req.get(<span class="tok-string">&quot;params&quot;</span>, {})
+
+        <span class="tok-keyword">if</span> method == <span class="tok-string">&quot;tools/list&quot;</span>:
+            <span class="tok-keyword">with</span> self._lock:
+                tools_meta = [
+                    {
+                        <span class="tok-string">&quot;name&quot;</span>: t.name,
+                        <span class="tok-string">&quot;description&quot;</span>: t.description,
+                        <span class="tok-string">&quot;inputSchema&quot;</span>: t.input_schema,
+                    }
+                    <span class="tok-keyword">for</span> t <span class="tok-keyword">in</span> self._tools.values()
+                ]
+            <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;result&quot;</span>: {<span class="tok-string">&quot;tools&quot;</span>: tools_meta}}, ensure_ascii=<span class="tok-keyword">False</span>)
+
+        <span class="tok-keyword">if</span> method == <span class="tok-string">&quot;tools/call&quot;</span>:
+            tool_name = params.get(<span class="tok-string">&quot;name&quot;</span>)
+            arguments = params.get(<span class="tok-string">&quot;arguments&quot;</span>, {})
+            <span class="tok-keyword">with</span> self._lock:
+                spec = self._tools.get(tool_name)
+            <span class="tok-keyword">if</span> spec <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+                <span class="tok-keyword">return</span> json.dumps(
+                    {<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;error&quot;</span>: {<span class="tok-string">&quot;code&quot;</span>: -<span class="tok-number">32601</span>, <span class="tok-string">&quot;message&quot;</span>: <span class="tok-string">&quot;Tool not found&quot;</span>}},
+                    ensure_ascii=<span class="tok-keyword">False</span>,
+                )
+            output = spec.handler(arguments)
+            <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;result&quot;</span>: output}, ensure_ascii=<span class="tok-keyword">False</span>)
+
+        <span class="tok-keyword">return</span> json.dumps(
+            {<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;error&quot;</span>: {<span class="tok-string">&quot;code&quot;</span>: -<span class="tok-number">32601</span>, <span class="tok-string">&quot;message&quot;</span>: <span class="tok-string">&quot;Method not found&quot;</span>}},
+            ensure_ascii=<span class="tok-keyword">False</span>,
+        )
+
+
+<span class="tok-keyword">def</span> check_inventory(args: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+    sku = <span class="tok-builtin">str</span>(args.get(<span class="tok-string">&quot;sku&quot;</span>, <span class="tok-string">&quot;&quot;</span>))
+    stock = {<span class="tok-string">&quot;SKU-LAPTOP-01&quot;</span>: <span class="tok-number">12</span>, <span class="tok-string">&quot;SKU-MOUSE-02&quot;</span>: <span class="tok-number">0</span>}
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;sku&quot;</span>: sku, <span class="tok-string">&quot;in_stock&quot;</span>: stock.get(sku, <span class="tok-number">0</span>)}
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    server = SimpleMCPServer(<span class="tok-string">&quot;warehouse-mcp&quot;</span>)
+    server.register_tool(
+        MCPToolSpec(
+            name=<span class="tok-string">&quot;check_inventory&quot;</span>,
+            description=<span class="tok-string">&quot;Depo stok durumunu SKU koduna göre sorgular.&quot;</span>,
+            input_schema={<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;object&quot;</span>, <span class="tok-string">&quot;properties&quot;</span>: {<span class="tok-string">&quot;sku&quot;</span>: {<span class="tok-string">&quot;type&quot;</span>: <span class="tok-string">&quot;string&quot;</span>}}, <span class="tok-string">&quot;required&quot;</span>: [<span class="tok-string">&quot;sku&quot;</span>]},
+            handler=check_inventory,
+        )
+    )
+
+    <span class="tok-comment"># 1. MCP Client önce sunucuda hangi Tool&#x27;lar var diye keşif yapar (tools/list).</span>
+    list_req = json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: <span class="tok-number">1</span>, <span class="tok-string">&quot;method&quot;</span>: <span class="tok-string">&quot;tools/list&quot;</span>})
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;MCP tools/list Yanıtı:&quot;</span>, server.handle_json_rpc(list_req))
+
+    <span class="tok-comment"># 2. MCP Client standart formatla Tool çağırır (tools/call).</span>
+    call_req = json.dumps(
+        {
+            <span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>,
+            <span class="tok-string">&quot;id&quot;</span>: <span class="tok-number">2</span>,
+            <span class="tok-string">&quot;method&quot;</span>: <span class="tok-string">&quot;tools/call&quot;</span>,
+            <span class="tok-string">&quot;params&quot;</span>: {<span class="tok-string">&quot;name&quot;</span>: <span class="tok-string">&quot;check_inventory&quot;</span>, <span class="tok-string">&quot;arguments&quot;</span>: {<span class="tok-string">&quot;sku&quot;</span>: <span class="tok-string">&quot;SKU-LAPTOP-01&quot;</span>}},
+        }
+    )
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;MCP tools/call Yanıtı:&quot;</span>, server.handle_json_rpc(call_req))
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod05_mcp_client_server.py</code>)</div>
+        <pre class="output-pre">MCP tools/list Yanıtı: {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;result&quot;: {&quot;tools&quot;: [{&quot;name&quot;: &quot;check_inventory&quot;, &quot;description&quot;: &quot;Depo stok durumunu SKU koduna göre sorgular.&quot;, &quot;inputSchema&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;sku&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;sku&quot;]}}]}}
+MCP tools/call Yanıtı: {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 2, &quot;result&quot;: {&quot;sku&quot;: &quot;SKU-LAPTOP-01&quot;, &quot;in_stock&quot;: 12}}</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li>Tek bir <em>MCP Server</em> içine 50 alakasız araç doldurup <em>LLM</em>'in seçim kalitesini düşürmek.</li>
+              <li>Veritabanı silme gibi tehlikeli araçlara yetkilendirme (<em>Authorization</em>) koymadan erişim açmak.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>SimpleMCPServer</code> içine <code>reserve_inventory</code> adında ikinci bir araç kaydedin ve <code>tools/list</code> çıktısında her iki aracın da listelendiğini doğrulayın.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 6 ================= -->
+      <section class="module" id="mod6">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#3730a3,#4f46e5,#6366f1);">
+          <div>
+            <div class="mod-tag">Çoklu Ajan Koordinasyonu &amp; Karar Matrisi</div>
+            <h2>Modül 6: Planning &amp; Multi-Agent Orchestration</h2>
+          </div>
+          <div class="mod-num-badge">06</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c6);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Tek bir <em>Prompt</em> içine hem araştırma, hem yazma hem de kalite denetimi yüklediğinizde çıktı kalitesi düşer. Tıpkı bir yazılım ekibinde olduğu gibi rolleri (<strong>Planner</strong>, <strong>Writer</strong>, <strong>Reviewer</strong>) ayırmak ve aralarındaki geçişleri koşullu bir grafikle (<strong>Stateful Workflow</strong>) yönetmek çok daha kararlı sonuçlar verir.</p>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c6);">2</span> Key Terminology &amp; 2027 Framework Karar Matrisi</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c6);"><div class="term-title" style="color:var(--c6);">Planning</div><div class="term-desc">Büyük bir hedefi sıralı ve yürütülebilir küçük alt görevlere bölme sürecidir.</div></div><div class="term-card" style="border-left-color:var(--c6);"><div class="term-title" style="color:var(--c6);">Stateful Workflow (Graph)</div><div class="term-desc">Adımların Node, geçişlerin Edge olarak modellendiği ve ortak State nesnesinin aktarıldığı mimaridir.</div></div><div class="term-card" style="border-left-color:var(--c6);"><div class="term-title" style="color:var(--c6);">Conditional Edge</div><div class="term-desc">Bir düğümün çıktısına göre sıradaki adımın dinamik seçilmesidir (ör. onaylanmazsa geri dön).</div></div><div class="term-card" style="border-left-color:var(--c6);"><div class="term-title" style="color:var(--c6);">Trade-off</div><div class="term-desc">Bir mimari seçimin kazandırdığı avantajlar karşılığında kabul edilen maliyet veya kısıttır.</div></div></div>
+
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Framework / Araç</th>
+              <th>Temel Yaklaşım</th>
+              <th>En Güçlü Senaryo</th>
+              <th>Mimari Trade-off</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>LangGraph</strong></td><td>Graf tabanlı <em>Stateful Workflow</em></td><td>Karmaşık döngüler &amp; <em>Production</em> kontrolü</td><td>Graf yapısını tasarlamak başta daha fazla disiplin ister.</td></tr>
+            <tr><td><strong>CrewAI</strong></td><td>Rol tabanlı ekip (<em>Role / Goal</em>)</td><td>Hızlı prototip, araştırma &amp; içerik akışları</td><td>Çok ince <em>State</em> kontrolünde esneklik azalabilir.</td></tr>
+            <tr><td><strong>OpenAI Agents SDK</strong></td><td>Hafif, minimalist <em>Handoff</em> döngüsü</td><td>Sade, düşük soyutlamalı hızlı ajanlar</td><td>Karmaşık graf dallanmalarını elle yönetmek gerekir.</td></tr>
+            <tr><td><strong>AutoGen</strong></td><td>Sohbet tabanlı çoklu ajan</td><td>Kod yazma &amp; doğrulama tartışmaları</td><td>Sınırlandırılmazsa yüksek <em>Token</em> tüketebilir.</td></tr>
+            <tr><td><strong>n8n</strong></td><td>Görsel <em>Low-Code Automation</em></td><td>Slack, CRM, e-posta iş süreçleri</td><td>Özel <em>Concurrency</em> mantığı için kod tabanlı çözümler üstündür.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c6);">3</span> Adım Adım Teknik Anlatım</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">LangGraph Benzeri Koşullu Geçişli (Conditional Edge) Graf Motoru</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c6);">Planner Node</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0284c7;">Writer Node</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#d97706;">Reviewer Node</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#dc2626;">Red: Writer'a Dön</span>
+            <span class="f-arrow">|</span>
+            <span class="f-node" style="background:#059669;">Onay: END</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c6);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">Immutable State Graph Engine (Planner -&gt; Writer -&gt; Reviewer) &mdash; <code>labs/mod06_stateful_workflow.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 6 Hands-On Lab: Planning &amp; Multi-Agent Stateful Workflow (LangGraph Mantığı)
+- Node (Düğüm) ve Edge (Geçiş) tabanlı deterministik graf motoru
+- Immutable State kopyalaması ile %100 Thread-Safe yürütme
+- Koşullu yönlendirme (Conditional Edge): Reviewer onaylamazsa Writer&#x27;a geri döner
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">replace</span>
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Callable
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> WorkflowState:
+    topic: <span class="tok-builtin">str</span>
+    plan: <span class="tok-builtin">tuple</span>[<span class="tok-builtin">str</span>, ...] = ()
+    draft: <span class="tok-builtin">str</span> = <span class="tok-string">&quot;&quot;</span>
+    review_passed: <span class="tok-builtin">bool</span> = <span class="tok-keyword">False</span>
+    revision_count: <span class="tok-builtin">int</span> = <span class="tok-number">0</span>
+
+
+<span class="tok-keyword">def</span> planner_node(state: WorkflowState) -&gt; WorkflowState:
+    <span class="tok-docstring">&quot;&quot;&quot;1. Ajan (Planner): Konuyu alt adımlara böler.&quot;&quot;&quot;</span>
+    steps = (
+        <span class="tok-string">f&quot;{state.topic} nedir?&quot;</span>,
+        <span class="tok-string">&quot;Neden Production ortamında kritik önem taşır?&quot;</span>,
+        <span class="tok-string">&quot;Basit bir uygulama örneği&quot;</span>,
+    )
+    <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, plan=steps)
+
+
+<span class="tok-keyword">def</span> writer_node(state: WorkflowState) -&gt; WorkflowState:
+    <span class="tok-docstring">&quot;&quot;&quot;2. Ajan (Writer): Plana göre taslak metin üretir.&quot;&quot;&quot;</span>
+    <span class="tok-keyword">if</span> state.revision_count == <span class="tok-number">0</span>:
+        <span class="tok-comment"># İlk taslakta bilerek kısa bırakıyoruz ki Reviewer geri çevirsin.</span>
+        draft = <span class="tok-string">f&quot;{state.topic} önemlidir.&quot;</span>
+    <span class="tok-keyword">else</span>:
+        bullet_text = <span class="tok-string">&quot; | &quot;</span>.join(state.plan)
+        draft = <span class="tok-string">f&quot;{state.topic} kapsamlı özet -&gt; {bullet_text}. Örnek: State izole edilmelidir.&quot;</span>
+    <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, draft=draft, revision_count=state.revision_count + <span class="tok-number">1</span>)
+
+
+<span class="tok-keyword">def</span> reviewer_node(state: WorkflowState) -&gt; WorkflowState:
+    <span class="tok-docstring">&quot;&quot;&quot;3. Ajan (Reviewer): Taslağın kalite kriterini kontrol eder.&quot;&quot;&quot;</span>
+    passed = <span class="tok-builtin">len</span>(state.draft) &gt;= <span class="tok-number">50</span> <span class="tok-keyword">and</span> <span class="tok-string">&quot;Örnek:&quot;</span> <span class="tok-keyword">in</span> state.draft
+    <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, review_passed=passed)
+
+
+<span class="tok-keyword">def</span> run_stateful_graph(initial_state: WorkflowState, max_revisions: <span class="tok-builtin">int</span> = <span class="tok-number">3</span>) -&gt; WorkflowState:
+    <span class="tok-docstring">&quot;&quot;&quot;LangGraph benzeri koşullu geçişli (Conditional Edge) yürütme motoru.&quot;&quot;&quot;</span>
+    nodes: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Callable[[WorkflowState], WorkflowState]] = {
+        <span class="tok-string">&quot;planner&quot;</span>: planner_node,
+        <span class="tok-string">&quot;writer&quot;</span>: writer_node,
+        <span class="tok-string">&quot;reviewer&quot;</span>: reviewer_node,
+    }
+
+    current_node = <span class="tok-string">&quot;planner&quot;</span>
+    state = initial_state
+
+    <span class="tok-keyword">while</span> current_node != <span class="tok-string">&quot;END&quot;</span>:
+        <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[GRAPH] Çalıştırılan Node: {current_node}&quot;</span>)
+        state = nodes[current_node](state)
+
+        <span class="tok-comment"># Edge (Geçiş) Kuralları</span>
+        <span class="tok-keyword">if</span> current_node == <span class="tok-string">&quot;planner&quot;</span>:
+            current_node = <span class="tok-string">&quot;writer&quot;</span>
+        <span class="tok-keyword">elif</span> current_node == <span class="tok-string">&quot;writer&quot;</span>:
+            current_node = <span class="tok-string">&quot;reviewer&quot;</span>
+        <span class="tok-keyword">elif</span> current_node == <span class="tok-string">&quot;reviewer&quot;</span>:
+            <span class="tok-keyword">if</span> state.review_passed <span class="tok-keyword">or</span> state.revision_count &gt;= max_revisions:
+                current_node = <span class="tok-string">&quot;END&quot;</span>
+            <span class="tok-keyword">else</span>:
+                <span class="tok-builtin">print</span>(<span class="tok-string">&quot;[GRAPH] Reviewer reddetti -&gt; Writer düğümüne geri dönülüyor.&quot;</span>)
+                current_node = <span class="tok-string">&quot;writer&quot;</span>
+
+    <span class="tok-keyword">return</span> state
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    final_state = run_stateful_graph(WorkflowState(topic=<span class="tok-string">&quot;Agentic AI State Management&quot;</span>))
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;\n--- SONUÇ ---&quot;</span>)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Onay Durumu:&quot;</span>, final_state.review_passed)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Revizyon Sayısı:&quot;</span>, final_state.revision_count)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Nihai Taslak:&quot;</span>, final_state.draft)
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod06_stateful_workflow.py</code>)</div>
+        <pre class="output-pre">[GRAPH] Çalıştırılan Node: planner
+[GRAPH] Çalıştırılan Node: writer
+[GRAPH] Çalıştırılan Node: reviewer
+[GRAPH] Reviewer reddetti -&gt; Writer düğümüne geri dönülüyor.
+[GRAPH] Çalıştırılan Node: writer
+[GRAPH] Çalıştırılan Node: reviewer
+
+--- SONUÇ ---
+Onay Durumu: True
+Revizyon Sayısı: 2
+Nihai Taslak: Agentic AI State Management kapsamlı özet -&gt; Agentic AI State Management nedir? | Neden Production ortamında kritik önem taşır? | Basit bir uygulama örneği. Örnek: State izole edilmelidir.</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li>Tek <em>LLM</em> çağrısıyla çözülecek basit bir iş için gereksiz yere 4 ajan kurup gecikmeyi katlamak.</li>
+              <li>Düğümler arasında paylaşılan <em>State</em>'i yerinde değiştirip (<em>Mutate</em>) hata ayıklamayı zorlaştırmak.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>reviewer_node</code> içine <code>"Production"</code> kelimesi zorunluluğu ekleyin ve <code>writer_node</code>'un revizyonda bu kuralı geçmesini sağlayın.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 7 ================= -->
+      <section class="module" id="mod7">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#991b1b,#dc2626,#ef4444);">
+          <div>
+            <div class="mod-tag">Canlı Ortam Dayanıklılığı &amp; Kariyer Koruması</div>
+            <h2>Modül 7: Production-Ready Engineering &amp; 3 Kritik Tuzak</h2>
+          </div>
+          <div class="mod-num-badge">07</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c7);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Kendi bilgisayarınızda çalışan bir prototip yapmak kolaydır; zor olan onu canlı ortamda (<em>Production</em>) ayakta tutmaktır. API'ler <code>429 Rate Limit</code> döndürebilir veya bir <em>Prompt</em> değişikliği eski davranışları bozabilir. <strong>Observability</strong>, <strong>Retry/Fallback</strong> ve <strong>Evaluation</strong> canlı sistemin sigortasıdır.</p>
+        <div class="analogy-box">
+          <div class="analogy-title">Günlük Hayattan Benzetme</div>
+          <strong>Observability</strong> uçağın kara kutusu, <strong>Fallback</strong> yedek motoru, <strong>Evaluation</strong> ise her bakım sonrası yapılan test uçuşudur.
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c7);">2</span> Key Terminology &amp; LoRA/QLoRA Ne Zaman Gerekir?</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c7);"><div class="term-title" style="color:var(--c7);">Observability (LangSmith Mantığı)</div><div class="term-desc">Agent'ın her adımındaki süreyi, hataları ve araç çağrılarını Trace/Span olarak kayıt altına almaktır.</div></div><div class="term-card" style="border-left-color:var(--c7);"><div class="term-title" style="color:var(--c7);">Evaluation (Evals)</div><div class="term-desc">Agent yanıtlarının doğruluk ve format kriterlerine göre otomatik test setleriyle ölçülmesidir.</div></div><div class="term-card" style="border-left-color:var(--c7);"><div class="term-title" style="color:var(--c7);">Retry &amp; Fallback</div><div class="term-desc">Geçici hatalarda artan bekleme süresiyle (Exponential Backoff) yeniden denemek; olmazsa yedek modele geçmektir.</div></div><div class="term-card" style="border-left-color:var(--c7);"><div class="term-title" style="color:var(--c7);">LoRA / QLoRA</div><div class="term-desc">Güncel veri için RAG kullanılır; LoRA/QLoRA yalnızca çok özel üslup veya küçük açık model optimizasyonu gerektiğinde tercih edilir.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c7);">3</span> 2027 Yolculuğunda Kaçınmanız Gereken 3 Kritik Tuzak</h3>
+        <div class="traps-grid">
+          <div class="trap-card">
+            <div class="trap-num">Tuzak #1</div>
+            <div class="trap-h">Temelleri Atlayıp Framework Ezberlemek</div>
+            <p class="trap-p">Python, API, <em>Evaluation</em> ve <em>Software Architecture</em> bilmeden yalnızca <em>LangChain</em> ezberlemek risklidir. Framework'ler değişir, mühendislik temelleri kalıcıdır.</p>
+          </div>
+          <div class="trap-card">
+            <div class="trap-num">Tuzak #2</div>
+            <div class="trap-h">Her Aracı Aynı Anda Öğrenmeye Çalışmak</div>
+            <p class="trap-p">Aynı hafta 5 farklı aracı kurmak zihinsel dağınıklık yaratır. Önce mimari <em>Trade-off</em>'ları anlayıp projenize uyan <strong>tek bir</strong> araçta derinleşin.</p>
+          </div>
+          <div class="trap-card">
+            <div class="trap-num">Tuzak #3</div>
+            <div class="trap-h">Kurs Biriktirmek (Tutorial Hell)</div>
+            <p class="trap-p">Pasif video izlemek sizi <em>AI Engineer</em> yapmaz. Tek bir rota seçip klavyeye dokunun ve gerçek bir problem çözen çalışan bir <em>Agent</em> inşa edin.</p>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c7);">4</span> Hands-On Lab (Eksiksiz Çalıştırılabilir Kod)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">Retry, Fallback, Observability Trace &amp; Evaluation &mdash; <code>labs/mod07_production_guardrails.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 7 Hands-On Lab: Production-Ready Engineering
+- Structured Observability Trace (LangSmith mantığı)
+- Retry + Exponential Backoff + Fallback mekanizması
+- Otomatik Evaluation (Deterministic Assert Checks)
+- Thread-Safe Trace Collector
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">import</span> time
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+<span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Callable
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> TraceEvent:
+    span_name: <span class="tok-builtin">str</span>
+    duration_ms: <span class="tok-builtin">float</span>
+    status: <span class="tok-builtin">str</span>
+    detail: <span class="tok-builtin">str</span>
+
+
+<span class="tok-keyword">class</span> ThreadSafeTracer:
+    <span class="tok-docstring">&quot;&quot;&quot;Production Observability için Thread-Safe izleme (Tracing) toplayıcısı.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._events: <span class="tok-builtin">list</span>[TraceEvent] = []
+
+    <span class="tok-keyword">def</span> record(self, event: TraceEvent) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            self._events.append(event)
+
+    <span class="tok-keyword">def</span> snapshot(self) -&gt; <span class="tok-builtin">list</span>[TraceEvent]:
+        <span class="tok-keyword">with</span> self._lock:
+            <span class="tok-keyword">return</span> <span class="tok-builtin">list</span>(self._events)
+
+
+<span class="tok-keyword">def</span> call_with_retry_and_fallback(
+    primary_fn: Callable[[], <span class="tok-builtin">str</span>],
+    fallback_fn: Callable[[], <span class="tok-builtin">str</span>],
+    tracer: ThreadSafeTracer,
+    max_retries: <span class="tok-builtin">int</span> = <span class="tok-number">2</span>,
+) -&gt; <span class="tok-builtin">str</span>:
+    <span class="tok-docstring">&quot;&quot;&quot;Geçici API hatalarında Retry yapar; başarısız olursa Fallback modele geçer.&quot;&quot;&quot;</span>
+    <span class="tok-keyword">for</span> attempt <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, max_retries + <span class="tok-number">2</span>):
+        start = time.perf_counter()
+        <span class="tok-keyword">try</span>:
+            result = primary_fn()
+            elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
+            tracer.record(TraceEvent(<span class="tok-string">&quot;primary_llm&quot;</span>, elapsed, <span class="tok-string">&quot;OK&quot;</span>, <span class="tok-string">f&quot;attempt={attempt}&quot;</span>))
+            <span class="tok-keyword">return</span> result
+        <span class="tok-keyword">except</span> <span class="tok-builtin">RuntimeError</span> <span class="tok-keyword">as</span> exc:
+            elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
+            tracer.record(TraceEvent(<span class="tok-string">&quot;primary_llm&quot;</span>, elapsed, <span class="tok-string">&quot;ERROR&quot;</span>, <span class="tok-string">f&quot;attempt={attempt}: {exc}&quot;</span>))
+            <span class="tok-keyword">if</span> attempt &lt;= max_retries:
+                time.sleep(<span class="tok-number">0.05</span> * attempt)  <span class="tok-comment"># Kısa Exponential Backoff</span>
+
+    start = time.perf_counter()
+    fallback_result = fallback_fn()
+    elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
+    tracer.record(TraceEvent(<span class="tok-string">&quot;fallback_llm&quot;</span>, elapsed, <span class="tok-string">&quot;OK&quot;</span>, <span class="tok-string">&quot;fallback_triggered&quot;</span>))
+    <span class="tok-keyword">return</span> fallback_result
+
+
+<span class="tok-keyword">def</span> evaluate_response(response: <span class="tok-builtin">str</span>, required_keywords: <span class="tok-builtin">tuple</span>[<span class="tok-builtin">str</span>, ...]) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">object</span>]:
+    <span class="tok-docstring">&quot;&quot;&quot;Basit otomatik Evaluation: Cevap gerekli bilgileri içeriyor mu?&quot;&quot;&quot;</span>
+    lowered = response.lower()
+    missing = [kw <span class="tok-keyword">for</span> kw <span class="tok-keyword">in</span> required_keywords <span class="tok-keyword">if</span> kw.lower() <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> lowered]
+    <span class="tok-keyword">return</span> {<span class="tok-string">&quot;passed&quot;</span>: <span class="tok-builtin">len</span>(missing) == <span class="tok-number">0</span>, <span class="tok-string">&quot;missing_keywords&quot;</span>: missing}
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    tracer = ThreadSafeTracer()
+    attempts = {<span class="tok-string">&quot;count&quot;</span>: <span class="tok-number">0</span>}
+
+    <span class="tok-keyword">def</span> unstable_primary() -&gt; <span class="tok-builtin">str</span>:
+        attempts[<span class="tok-string">&quot;count&quot;</span>] += <span class="tok-number">1</span>
+        <span class="tok-keyword">raise</span> <span class="tok-builtin">RuntimeError</span>(<span class="tok-string">&quot;429 Rate Limit Exceeded&quot;</span>)
+
+    <span class="tok-keyword">def</span> reliable_fallback() -&gt; <span class="tok-builtin">str</span>:
+        <span class="tok-keyword">return</span> <span class="tok-string">&quot;İade süresi 14 gündür ve kargo ücretsizdir.&quot;</span>
+
+    answer = call_with_retry_and_fallback(unstable_primary, reliable_fallback, tracer, max_retries=<span class="tok-number">2</span>)
+    eval_report = evaluate_response(answer, required_keywords=(<span class="tok-string">&quot;14 gün&quot;</span>, <span class="tok-string">&quot;ücretsiz&quot;</span>))
+
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Nihai Cevap:&quot;</span>, answer)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Evaluation Raporu:&quot;</span>, eval_report)
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;\n--- OBSERVABILITY TRACE ---&quot;</span>)
+    <span class="tok-keyword">for</span> ev <span class="tok-keyword">in</span> tracer.snapshot():
+        <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;  [{ev.status}] {ev.span_name} ({ev.duration_ms:.2f} ms) -&gt; {ev.detail}&quot;</span>)
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod07_production_guardrails.py</code>)</div>
+        <pre class="output-pre">Nihai Cevap: İade süresi 14 gündür ve kargo ücretsizdir.
+Evaluation Raporu: {&#x27;passed&#x27;: True, &#x27;missing_keywords&#x27;: []}
+
+--- OBSERVABILITY TRACE ---
+  [ERROR] primary_llm (0.00 ms) -&gt; attempt=1: 429 Rate Limit Exceeded
+  [ERROR] primary_llm (0.01 ms) -&gt; attempt=2: 429 Rate Limit Exceeded
+  [ERROR] primary_llm (0.01 ms) -&gt; attempt=3: 429 Rate Limit Exceeded
+  [OK] fallback_llm (0.00 ms) -&gt; fallback_triggered</pre>
+      </div>
+    </div>
+    
+
+        <div class="split-grid">
+          <div class="pitfall-card">
+            <div class="pitfall-title">Common Pitfalls</div>
+            <ul>
+              <li>Canlı sistemde yapılandırılmış <em>Trace</em> yerine düz <code>print()</code> kullanmak.</li>
+              <li><code>401 Invalid API Key</code> gibi kalıcı hatalarda gereksiz <em>Retry</em> döngüsüne girmek.</li>
+            </ul>
+          </div>
+          <div class="challenge-card">
+            <div class="challenge-title">Mini Challenge</div>
+            <p><code>unstable_primary</code> fonksiyonunu 2. denemede başarılı olacak biçimde değiştirin ve <em>Fallback</em> tetiklenmeden işlemin bittiğini <em>Trace</em> çıktısında gözlemleyin.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODÜL 8 ================= -->
+      <section class="module" id="mod8">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#115e59,#0d9488,#14b8a6);">
+          <div>
+            <div class="mod-tag">Tüm Parçaların Birleşimi</div>
+            <h2>Modül 8: Capstone Mini-Project &amp; 14 Günlük Pratik Planı</h2>
+          </div>
+          <div class="mod-num-badge">08</div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c8);">1</span> Ne Öğreneceğiz &amp; Neden Önemli?</h3>
+        <p>Bu bitirme projesinde <em>Tool Use</em>, <em>RAG</em>, <em>Session Memory</em> ve <em>Observability</em> katmanlarını tek bir sistemde birleştiriyor ve <code>ThreadPoolExecutor</code> ile 4 eşzamanlı (<em>Concurrent</em>) müşteri isteğini aynı anda güvenle işliyoruz.</p>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c8);">2</span> Key Terminology (Kritik Kavramlar ve Tanımlar)</h3>
+        <div class="term-grid"><div class="term-card" style="border-left-color:var(--c8);"><div class="term-title" style="color:var(--c8);">Concurrency</div><div class="term-desc">Birden fazla kullanıcı isteğinin aynı zaman aralığında paralel olarak işlenebilmesidir.</div></div><div class="term-card" style="border-left-color:var(--c8);"><div class="term-title" style="color:var(--c8);">Race Condition</div><div class="term-desc">Paralel Thread'lerin paylaşılan veriyi kilitsiz değiştirmesi sonucu oluşan tutarsızlık hatasıdır.</div></div><div class="term-card" style="border-left-color:var(--c8);"><div class="term-title" style="color:var(--c8);">Routing</div><div class="term-desc">Kullanıcı niyetine göre isteğin doğru alt bileşene (Tool, RAG veya Fallback) yönlendirilmesidir.</div></div><div class="term-card" style="border-left-color:var(--c8);"><div class="term-title" style="color:var(--c8);">Latency</div><div class="term-desc">İsteğin sisteme girmesi ile yanıtın dönmesi arasında geçen milisaniye cinsinden süredir.</div></div></div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c8);">3</span> Capstone Uçtan Uca Mimari Akışı</h3>
+        <div class="diagram-box">
+          <div class="diagram-caption">Eşzamanlı (Concurrent) Production Support Agent</div>
+          <div class="flow-row">
+            <span class="f-node" style="background:var(--c8);">4 Paralel İstek (ThreadPool)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0f766e;">Session State (RLock)</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node-light">Routing: Tool / RAG / Fallback</span><span class="f-arrow">&rarr;</span>
+            <span class="f-node" style="background:#0f172a;">TraceSpan + Yanıt</span>
+          </div>
+        </div>
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c8);">4</span> Hands-On Lab (Eksiksiz Capstone Kodu)</h3>
+        
+    <div class="code-card">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-title">End-to-End Concurrent Production Support Agent &mdash; <code>labs/mod08_capstone_agent.py</code></div>
+        <div class="code-badge">Python 3.10+ &bull; Thread-Safe</div>
+      </div>
+      <pre class="code-pre"><code><span class="tok-docstring">&quot;&quot;&quot;
+Modül 8 Hands-On Lab: Capstone Mini-Project (End-to-End Customer Support Agent)
+Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
+- Memory &amp; Session State (Modül 3)
+- Agentic RAG Bilgi Bankası (Modül 4)
+- Tool Use (Sipariş Sorgulama) (Modül 2)
+- Observability Trace &amp; Evaluation (Modül 7)
+&quot;&quot;&quot;</span>
+
+<span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
+
+<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">import</span> time
+<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">deque</span>
+<span class="tok-keyword">from</span> concurrent.futures <span class="tok-keyword">import</span> <span class="tok-builtin">ThreadPoolExecutor</span>
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">field</span>
+
+
+<span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> TraceSpan:
+    session_id: <span class="tok-builtin">str</span>
+    step: <span class="tok-builtin">str</span>
+    latency_ms: <span class="tok-builtin">float</span>
+    outcome: <span class="tok-builtin">str</span>
+
+
+<span class="tok-decorator">@dataclass</span>(slots=<span class="tok-keyword">True</span>)
+<span class="tok-keyword">class</span> SupportSession:
+    session_id: <span class="tok-builtin">str</span>
+    history: <span class="tok-builtin">deque</span>[<span class="tok-builtin">str</span>] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-keyword">lambda</span>: <span class="tok-builtin">deque</span>(maxlen=<span class="tok-number">5</span>))
+
+
+<span class="tok-keyword">class</span> ProductionSupportAgent:
+    <span class="tok-docstring">&quot;&quot;&quot;Eşzamanlı (Concurrent) müşteri isteklerini güvenle işleyen Capstone Agent.&quot;&quot;&quot;</span>
+
+    <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
+        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._sessions: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, SupportSession] = {}
+        self._traces: <span class="tok-builtin">list</span>[TraceSpan] = []
+        self._knowledge_base = {
+            <span class="tok-string">&quot;iade&quot;</span>: <span class="tok-string">&quot;Teslimattan itibaren 14 gün içinde ücretsiz iade hakkınız vardır.&quot;</span>,
+            <span class="tok-string">&quot;garanti&quot;</span>: <span class="tok-string">&quot;Tüm elektronik ürünlerde 24 ay resmi distribütör garantisi bulunur.&quot;</span>,
+        }
+        self._orders = {
+            <span class="tok-string">&quot;ORD-500&quot;</span>: <span class="tok-string">&quot;Hazırlanıyor (Tahmini kargo: Yarın)&quot;</span>,
+            <span class="tok-string">&quot;ORD-501&quot;</span>: <span class="tok-string">&quot;Kargoda (Takip No: TR998877)&quot;</span>,
+        }
+
+    <span class="tok-keyword">def</span> _get_session(self, session_id: <span class="tok-builtin">str</span>) -&gt; SupportSession:
+        <span class="tok-keyword">with</span> self._lock:
+            sess = self._sessions.get(session_id)
+            <span class="tok-keyword">if</span> sess <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+                sess = SupportSession(session_id=session_id)
+                self._sessions[session_id] = sess
+            <span class="tok-keyword">return</span> sess
+
+    <span class="tok-keyword">def</span> _record_trace(self, span: TraceSpan) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-keyword">with</span> self._lock:
+            self._traces.append(span)
+
+    <span class="tok-keyword">def</span> handle_request(self, session_id: <span class="tok-builtin">str</span>, user_message: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">str</span>:
+        start = time.perf_counter()
+        session = self._get_session(session_id)
+
+        <span class="tok-keyword">with</span> self._lock:
+            session.history.append(<span class="tok-string">f&quot;USER: {user_message}&quot;</span>)
+
+        lowered = user_message.lower()
+        <span class="tok-comment"># 1. Tool Use Routing (Sipariş sorgusu)</span>
+        <span class="tok-keyword">if</span> <span class="tok-string">&quot;ord-&quot;</span> <span class="tok-keyword">in</span> lowered:
+            order_id = <span class="tok-builtin">next</span>(
+                tok.strip(<span class="tok-string">&quot;.,?!&quot;</span>).upper() <span class="tok-keyword">for</span> tok <span class="tok-keyword">in</span> user_message.split() <span class="tok-keyword">if</span> tok.lower().startswith(<span class="tok-string">&quot;ord-&quot;</span>)
+            )
+            status = self._orders.get(order_id, <span class="tok-string">&quot;Sipariş bulunamadı.&quot;</span>)
+            reply = <span class="tok-string">f&quot;[Tool:OrderLookup] {order_id} durumu -&gt; {status}&quot;</span>
+            step_name = <span class="tok-string">&quot;tool_order_lookup&quot;</span>
+        <span class="tok-comment"># 2. RAG Routing (Politika bilgisi)</span>
+        <span class="tok-keyword">elif</span> <span class="tok-string">&quot;iade&quot;</span> <span class="tok-keyword">in</span> lowered <span class="tok-keyword">or</span> <span class="tok-string">&quot;geri&quot;</span> <span class="tok-keyword">in</span> lowered:
+            reply = <span class="tok-string">f&quot;[RAG:Policy] {self._knowledge_base[&#x27;iade&#x27;]}&quot;</span>
+            step_name = <span class="tok-string">&quot;rag_policy_search&quot;</span>
+        <span class="tok-keyword">elif</span> <span class="tok-string">&quot;garanti&quot;</span> <span class="tok-keyword">in</span> lowered:
+            reply = <span class="tok-string">f&quot;[RAG:Policy] {self._knowledge_base[&#x27;garanti&#x27;]}&quot;</span>
+            step_name = <span class="tok-string">&quot;rag_policy_search&quot;</span>
+        <span class="tok-keyword">else</span>:
+            reply = <span class="tok-string">&quot;[Fallback] Talebinizi netleştirebilir misiniz? Sipariş (ORD-XXX), iade veya garanti sorabilirsiniz.&quot;</span>
+            step_name = <span class="tok-string">&quot;fallback_clarify&quot;</span>
+
+        <span class="tok-keyword">with</span> self._lock:
+            session.history.append(<span class="tok-string">f&quot;AGENT: {reply}&quot;</span>)
+
+        latency = (time.perf_counter() - start) * <span class="tok-number">1000</span>
+        self._record_trace(TraceSpan(session_id, step_name, latency, <span class="tok-string">&quot;SUCCESS&quot;</span>))
+        <span class="tok-keyword">return</span> reply
+
+    <span class="tok-keyword">def</span> get_traces(self) -&gt; <span class="tok-builtin">list</span>[TraceSpan]:
+        <span class="tok-keyword">with</span> self._lock:
+            <span class="tok-keyword">return</span> <span class="tok-builtin">list</span>(self._traces)
+
+
+<span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    agent = ProductionSupportAgent()
+    requests = [
+        (<span class="tok-string">&quot;sess-1&quot;</span>, <span class="tok-string">&quot;ORD-500 siparişim ne durumda?&quot;</span>),
+        (<span class="tok-string">&quot;sess-2&quot;</span>, <span class="tok-string">&quot;Ürünü beğenmezsem iade süresi kaç gün?&quot;</span>),
+        (<span class="tok-string">&quot;sess-3&quot;</span>, <span class="tok-string">&quot;Kulaklıkların garanti süresi ne kadar?&quot;</span>),
+        (<span class="tok-string">&quot;sess-1&quot;</span>, <span class="tok-string">&quot;Teşekkürler, peki ORD-501 nerede?&quot;</span>),
+    ]
+
+    <span class="tok-comment"># Thread-Safety testi: 4 isteği aynı anda paralel ThreadPoolExecutor ile çalıştırıyoruz.</span>
+    <span class="tok-keyword">with</span> <span class="tok-builtin">ThreadPoolExecutor</span>(max_workers=<span class="tok-number">4</span>) <span class="tok-keyword">as</span> executor:
+        futures = [executor.submit(agent.handle_request, sid, msg) <span class="tok-keyword">for</span> sid, msg <span class="tok-keyword">in</span> requests]
+        <span class="tok-keyword">for</span> (sid, msg), fut <span class="tok-keyword">in</span> <span class="tok-builtin">zip</span>(requests, futures):
+            <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[{sid}] Soru: {msg}&quot;</span>)
+            <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[{sid}] Yanıt: {fut.result()}\n&quot;</span>)
+
+    <span class="tok-builtin">print</span>(<span class="tok-string">&quot;--- CAPSTONE OBSERVABILITY TRACES ---&quot;</span>)
+    <span class="tok-keyword">for</span> span <span class="tok-keyword">in</span> agent.get_traces():
+        <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;  {span.session_id} | {span.step} | {span.latency_ms:.3f} ms | {span.outcome}&quot;</span>)
+
+
+<span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
+    main()</code></pre>
+      <div class="output-box">
+        <div class="output-label">BEKLENEN TERMINAL ÇIKTISI (<code>python labs/mod08_capstone_agent.py</code>)</div>
+        <pre class="output-pre">[sess-1] Soru: ORD-500 siparişim ne durumda?
+[sess-1] Yanıt: [Tool:OrderLookup] ORD-500 durumu -&gt; Hazırlanıyor (Tahmini kargo: Yarın)
+
+[sess-2] Soru: Ürünü beğenmezsem iade süresi kaç gün?
+[sess-2] Yanıt: [RAG:Policy] Teslimattan itibaren 14 gün içinde ücretsiz iade hakkınız vardır.
+
+[sess-3] Soru: Kulaklıkların garanti süresi ne kadar?
+[sess-3] Yanıt: [RAG:Policy] Tüm elektronik ürünlerde 24 ay resmi distribütör garantisi bulunur.
+
+[sess-1] Soru: Teşekkürler, peki ORD-501 nerede?
+[sess-1] Yanıt: [Tool:OrderLookup] ORD-501 durumu -&gt; Kargoda (Takip No: TR998877)
+
+--- CAPSTONE OBSERVABILITY TRACES ---
+  sess-1 | tool_order_lookup | 0.026 ms | SUCCESS
+  sess-2 | rag_policy_search | 0.009 ms | SUCCESS
+  sess-3 | rag_policy_search | 0.008 ms | SUCCESS
+  sess-1 | tool_order_lookup | 0.009 ms | SUCCESS</pre>
+      </div>
+    </div>
+    
+
+        <h3 class="sec-h"><span class="sec-pill" style="background:var(--c8);">5</span> 14 Günlük Hemen Uygulanabilir Pratik Planı</h3>
+        <div class="roadmap-grid">
+          <div class="day-card"><span class="day-badge">Gün 1–2:</span> Modül 0 &amp; 1'i çalıştırın; kendi JSON şemanızı (ör. CV özetleyici) tasarlayın.</div>
+          <div class="day-card"><span class="day-badge">Gün 3–4:</span> Modül 2'ye 2 yeni <em>Tool</em> (döviz çevirici, tarih hesaplayıcı) ekleyin.</div>
+          <div class="day-card"><span class="day-badge">Gün 5–6:</span> Modül 3'teki belleği JSON dosyasına kaydedip geri yükleyin (<em>Persistence</em>).</div>
+          <div class="day-card"><span class="day-badge">Gün 7–8:</span> Modül 4'ü kendi ders/iş notlarınızla farklı <code>chunk_size</code> değerlerinde test edin.</div>
+          <div class="day-card"><span class="day-badge">Gün 9–10:</span> Modül 5'te 2 farklı aracı tek <em>MCP Server</em> üzerinden dışarı açın.</div>
+          <div class="day-card"><span class="day-badge">Gün 11–12:</span> Modül 6'da 3 düğümlü kendi <em>Stateful Workflow</em> onay grafınızı kurun.</div>
+          <div class="day-card" style="grid-column:span 2;"><span class="day-badge">Gün 13–14:</span> Modül 7 &amp; 8'i birleştirip gerçek bir <em>LLM API</em> (veya yerel <em>Ollama</em>) bağlayın, <em>Evaluation</em> testlerini geçip GitHub portföyünüzde yayınlayın.</div>
+        </div>
+      </section>
+
+      <!-- ================= MASTER GLOSSARY ================= -->
+      <section class="module" id="glossary">
+        <div class="mod-banner" style="background:linear-gradient(135deg,#0f172a,#1e293b,#334155);">
+          <div>
+            <div class="mod-tag">Hızlı Referans Sözlüğü</div>
+            <h2>Master Glossary (33 Kritik Teknik Terim)</h2>
+          </div>
+          <div class="mod-num-badge">A–Z</div>
+        </div>
+
+        <div class="glossary-grid">
+          <div class="gloss-item"><strong>Agent Loop:</strong> Hedefe ulaşana kadar <em>Think &rarr; Act &rarr; Observe</em> adımlarını tekrarlayan yürütme döngüsüdür.</div>
+          <div class="gloss-item"><strong>Agent Memory:</strong> Konuşma geçmişini (<em>Short-Term</em>) ve kalıcı bilgileri (<em>Long-Term</em>) saklama katmanıdır.</div>
+          <div class="gloss-item"><strong>Agentic AI:</strong> Planlama, araç kullanımı, bellek ve öz-değerlendirme yapabilen hedef odaklı sistem mimarisidir.</div>
+          <div class="gloss-item"><strong>Agentic RAG:</strong> Zayıf arama sonuçlarını fark edip sorguyu yeniden yazarak (<em>Query Rewrite</em>) tekrar arayan RAG modelidir.</div>
+          <div class="gloss-item"><strong>Bounded Memory:</strong> Bellek taşmasını önlemek için yalnızca son N kaydı tutan sabit boyutlu yapıdır (<code>deque</code>).</div>
+          <div class="gloss-item"><strong>Chunking:</strong> Uzun dokümanların vektör aramasına uygun küçük parçalara bölünmesidir.</div>
+          <div class="gloss-item"><strong>Concurrency:</strong> Birden fazla isteğin aynı zaman aralığında paralel olarak işlenebilmesidir.</div>
+          <div class="gloss-item"><strong>Conditional Edge:</strong> Graf akışında mevcut <em>State</em>'e göre sıradaki düğümün dinamik belirlenmesidir.</div>
+          <div class="gloss-item"><strong>Context Window:</strong> Modelin tek istekte işleyebileceği maksimum <em>Token</em> kapasitesidir.</div>
+          <div class="gloss-item"><strong>Cosine Similarity:</strong> İki vektör arasındaki anlamsal yakınlığı 0.0–1.0 arasında ölçen metriktir.</div>
+          <div class="gloss-item"><strong>Deployment:</strong> Uygulamanın gerçek kullanıcıların erişebileceği canlı sunucuya alınmasıdır.</div>
+          <div class="gloss-item"><strong>Embeddings:</strong> Metinleri anlamsal olarak karşılaştırılabilir sayısal vektörlere dönüştüren temsillerdir.</div>
+          <div class="gloss-item"><strong>Evaluation (Evals):</strong> <em>Agent</em> çıktılarının doğruluk ve format kriterlerine göre otomatik ölçülmesidir.</div>
+          <div class="gloss-item"><strong>Fallback:</strong> Birincil servis başarısız olduğunda devreye giren güvenli yedek çalışma yoludur.</div>
+          <div class="gloss-item"><strong>Function Calling:</strong> <em>LLM</em>'in çağrılacak fonksiyonu ve parametrelerini yapılandırılmış biçimde bildirmesidir.</div>
+          <div class="gloss-item"><strong>Immutable State:</strong> Oluşturulduktan sonra yerinde değiştirilmeyen, <em>Thread-Safe</em> durum nesnesidir.</div>
+          <div class="gloss-item"><strong>JSON-RPC 2.0:</strong> <em>MCP</em> iletişiminde kullanılan hafif JSON tabanlı uzak fonksiyon çağrı protokolüdür.</div>
+          <div class="gloss-item"><strong>Latency:</strong> İsteğin gönderilmesi ile yanıtın alınması arasında geçen toplam bekleme süresidir.</div>
+          <div class="gloss-item"><strong>LLM (Large Language Model):</strong> Büyük ölçekli metin verileriyle eğitilmiş dil modelidir.</div>
+          <div class="gloss-item"><strong>LoRA / QLoRA:</strong> Büyük modelleri düşük bellek maliyetiyle belirli bir alana uyarlayan <em>Fine-Tuning</em> tekniğidir.</div>
+          <div class="gloss-item"><strong>Max Steps:</strong> Sonsuz döngüyü ve beklenmeyen API maliyetini önleyen adım sınırıdır.</div>
+          <div class="gloss-item"><strong>Model Context Protocol (MCP):</strong> AI uygulamalarını harici araçlara bağlayan açık standart protokoldür.</div>
+          <div class="gloss-item"><strong>Multi-Agent Orchestration:</strong> Birden fazla uzman <em>Agent</em>'ın kurallı iş akışıyla birlikte yönetilmesidir.</div>
+          <div class="gloss-item"><strong>Observability:</strong> Sistemin iç adımlarını, sürelerini ve hatalarını <em>Trace</em> kayıtlarıyla izleyebilme yeteneğidir.</div>
+          <div class="gloss-item"><strong>Planning:</strong> Karmaşık hedefi sıralı ve doğrulanabilir alt görevlere ayırma sürecidir.</div>
+          <div class="gloss-item"><strong>Prompt-and-Response:</strong> Tek seferlik girdi-çıktı mantığına dayanan statik <em>LLM</em> kullanımıdır.</div>
+          <div class="gloss-item"><strong>Race Condition:</strong> Paralel <em>Thread</em>'lerin paylaşılan veriyi kontrolsüz değiştirmesiyle oluşan hatadır.</div>
+          <div class="gloss-item"><strong>RAG:</strong> Modelin yanıt üretmeden önce harici bilgi tabanından ilgili veriyi çekip kullanmasıdır.</div>
+          <div class="gloss-item"><strong>Retry &amp; Exponential Backoff:</strong> Geçici hatalarda artan bekleme süreleriyle kontrollü yeniden deneme stratejisidir.</div>
+          <div class="gloss-item"><strong>State Management:</strong> Çok adımlı akışlarda verinin tutarlı ve izole biçimde yönetilmesidir.</div>
+          <div class="gloss-item"><strong>Structured Outputs:</strong> Model çıktısının katı bir JSON şemasına birebir uymasıdır.</div>
+          <div class="gloss-item"><strong>Thread-Safety:</strong> Çoklu <em>Thread</em> erişiminde veri bütünlüğünün kilit veya değişmezlikle korunmasıdır.</div>
+          <div class="gloss-item"><strong>Tokenization &amp; Vector DB:</strong> Metnin <em>Token</em>'lara ayrılması ve <em>Embedding</em> vektörlerinin hızlı aranmasıdır.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

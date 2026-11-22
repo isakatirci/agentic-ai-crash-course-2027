@@ -1,0 +1,11 @@
+# Tüm lab dosyaları Python 3.10+ Standart Kütüphanesi ile sıfır harici paketle
+# hemen çalıştırılabilir (Local Offline Mode).
+#
+# Gerçek LLM API ve Framework entegrasyonlarına geçmek istediğinizde
+# aşağıdaki opsiyonel paketleri kurabilirsiniz:
+openai>=1.50.0
+python-dotenv>=1.0.1
+pydantic>=2.9.0
+langgraph>=0.2.0
+langchain-core>=0.3.0
+mcp>=1.0.0
