@@ -66,8 +66,8 @@ Bu kursun tüm laboratuvar dosyaları `agentic-ai-crash-course-2027/labs/` klas�
 PowerShell terminalini açın ve aşağıdaki adımları sırayla çalıştırın:
 
 ```powershell
-# 1. Kurs klasörüne geçin
-cd c:\Users\isa\medium\agentic-ai-crash-course-2027
+# 1. Kurs klasörüne geçin (PowerShell: $env:USERPROFILE | CMD: %USERPROFILE%)
+cd $env:USERPROFILE\agentic-ai-crash-course-2027
 
 # 2. İzole bir Python Virtual Environment oluşturun
 python -m venv .venv
