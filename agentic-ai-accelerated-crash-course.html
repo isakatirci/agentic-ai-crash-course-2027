@@ -765,24 +765,28 @@ Modül 1 Hands-On Lab: LLM Engineering Temelleri
 - %100 Thread-Safe tasarım (immutable dataclass &amp; zero global mutable state)
 &quot;&quot;&quot;</span>
 
+<span class="tok-comment"># Tip ipuçlarını (Type Hints) daha esnek kullanmamızı sağlar.</span>
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
-<span class="tok-keyword">import</span> json
-<span class="tok-keyword">import</span> re
-<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
+<span class="tok-keyword">import</span> json  <span class="tok-comment"># Metin halindeki JSON verisini Python sözlüğüne (dict) çevirir.</span>
+<span class="tok-keyword">import</span> re    <span class="tok-comment"># Düzenli ifadeler (Regex) ile metni parçalara ayırmak için kullanılır.</span>
+<span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>  <span class="tok-comment"># Az kodla temiz veri sınıfları (Class) oluşturur.</span>
 <span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any
 
-<span class="tok-comment"># Regex desenini uygulama başında bir kez derliyoruz (High Efficiency).</span>
+<span class="tok-comment"># Regex desenini fonksiyonun dışında 1 kez derliyoruz (High Efficiency).</span>
+<span class="tok-comment"># Böylece her çağrıda bilgisayar aynı deseni tekrar hesaplamaz.</span>
 _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</span>, re.UNICODE)
 
 
+<span class="tok-comment"># frozen=True -&gt; Nesne oluşturulduktan sonra değiştirilemez (Immutable &amp; Thread-Safe).</span>
+<span class="tok-comment"># slots=True  -&gt; Python&#x27;ın gereksiz bellek (RAM) harcamasını engeller.</span>
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> LLMRequestConfig:
     <span class="tok-docstring">&quot;&quot;&quot;Değiştirilemez (Immutable) LLM yapılandırması. Thread-Safe&#x27;tir.&quot;&quot;&quot;</span>
 
     model: <span class="tok-builtin">str</span> = <span class="tok-string">&quot;gpt-4o-mini&quot;</span>
-    temperature: <span class="tok-builtin">float</span> = <span class="tok-number">0.0</span>  <span class="tok-comment"># Deterministik çıktı için 0.0</span>
-    max_context_tokens: <span class="tok-builtin">int</span> = <span class="tok-number">4096</span>
+    temperature: <span class="tok-builtin">float</span> = <span class="tok-number">0.0</span>  <span class="tok-comment"># 0.0 = En tutarlı, sürprizsiz (Deterministik) çıktı.</span>
+    max_context_tokens: <span class="tok-builtin">int</span> = <span class="tok-number">4096</span>  <span class="tok-comment"># Modelin tek seferde alabileceği üst Token sınırı.</span>
     system_prompt: <span class="tok-builtin">str</span> = (
         <span class="tok-string">&quot;Sen bir destek bileti (Support Ticket) sınıflandırma uzmanısın. &quot;</span>
         <span class="tok-string">&quot;Yalnızca geçerli JSON döndür.&quot;</span>
@@ -791,7 +795,7 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> TicketClassification:
-    <span class="tok-docstring">&quot;&quot;&quot;Structured Output sözleşmesi (Schema).&quot;&quot;&quot;</span>
+    <span class="tok-docstring">&quot;&quot;&quot;Structured Output sözleşmesi (Schema): Modelden beklediğimiz 3 zorunlu alan.&quot;&quot;&quot;</span>
 
     category: <span class="tok-builtin">str</span>
     priority: <span class="tok-builtin">str</span>
@@ -800,21 +804,27 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
 
 <span class="tok-keyword">def</span> estimate_tokens(text: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">int</span>:
     <span class="tok-docstring">&quot;&quot;&quot;Basit ve hızlı bir Token sayısı tahminleyicisi.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># Metni kelimelere ve noktalama işaretlerine böler (liste döner).</span>
     parts = _WORD_PATTERN.findall(text)
-    <span class="tok-comment"># Türkçe ve karma metinlerde ortalama 1.3 token/parça güvenli bir yaklaşımdır.</span>
+    <span class="tok-comment"># Türkçe eklemeli bir dil olduğu için parça sayısını 1.3 ile çarpıp güvenli tahmin alırız.</span>
     <span class="tok-keyword">return</span> <span class="tok-builtin">max</span>(<span class="tok-number">1</span>, <span class="tok-builtin">int</span>(<span class="tok-builtin">len</span>(parts) * <span class="tok-number">1.3</span>))
 
 
 <span class="tok-keyword">def</span> validate_ticket_schema(raw_json: <span class="tok-builtin">str</span>) -&gt; TicketClassification:
     <span class="tok-docstring">&quot;&quot;&quot;LLM çıktısını katı kurallarla doğrular (Schema Validation).&quot;&quot;&quot;</span>
+    <span class="tok-comment"># 1. JSON metnini Python sözlüğüne (dict) çeviriyoruz; bozuksa hata fırlatır.</span>
     data: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any] = json.loads(raw_json)
+
+    <span class="tok-comment"># 2. Yalnızca izin verdiğimiz değerleri küme (set) olarak tanımlıyoruz (hızlı arama).</span>
     allowed_categories = {<span class="tok-string">&quot;billing&quot;</span>, <span class="tok-string">&quot;technical&quot;</span>, <span class="tok-string">&quot;account&quot;</span>}
     allowed_priorities = {<span class="tok-string">&quot;low&quot;</span>, <span class="tok-string">&quot;medium&quot;</span>, <span class="tok-string">&quot;high&quot;</span>}
 
+    <span class="tok-comment"># 3. Alanları güvenli şekilde okuyup küçük harfe çeviriyoruz (data.get hata vermez).</span>
     category = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;category&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).lower()
     priority = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;priority&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).lower()
     summary = <span class="tok-builtin">str</span>(data.get(<span class="tok-string">&quot;summary&quot;</span>, <span class="tok-string">&quot;&quot;</span>)).strip()
 
+    <span class="tok-comment"># 4. İzin dışı bir değer geldiyse veritabanına yazmadan önce işlemi durduruyoruz.</span>
     <span class="tok-keyword">if</span> category <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> allowed_categories:
         <span class="tok-keyword">raise</span> <span class="tok-builtin">ValueError</span>(<span class="tok-string">f&quot;Geçersiz category: {category}&quot;</span>)
     <span class="tok-keyword">if</span> priority <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> allowed_priorities:
@@ -822,6 +832,7 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
     <span class="tok-keyword">if</span> <span class="tok-keyword">not</span> summary:
         <span class="tok-keyword">raise</span> <span class="tok-builtin">ValueError</span>(<span class="tok-string">&quot;summary alanı boş olamaz.&quot;</span>)
 
+    <span class="tok-comment"># 5. Tüm kontroller geçti; artık güvenli ve tip korumalı nesnemizi döndürebiliriz.</span>
     <span class="tok-keyword">return</span> TicketClassification(category=category, priority=priority, summary=summary)
 
 
@@ -830,12 +841,14 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
     Harici API anahtarı olmadan Structured Outputs akışını test etmek için
     yerel deterministik simülatör. Gerçek projede burada OpenAI SDK çağrılır.
     &quot;&quot;&quot;</span>
+    <span class="tok-comment"># API&#x27;ye gitmeden önce toplam Token bütçesini (System + User) kontrol ediyoruz.</span>
     total_tokens = estimate_tokens(config.system_prompt) + estimate_tokens(user_message)
     <span class="tok-keyword">if</span> total_tokens &gt; config.max_context_tokens:
         <span class="tok-keyword">raise</span> <span class="tok-builtin">OverflowError</span>(
             <span class="tok-string">f&quot;Context Window aşıldı! ({total_tokens} &gt; {config.max_context_tokens})&quot;</span>
         )
 
+    <span class="tok-comment"># Mesajı küçük harfe çevirip anahtar kelimelere göre örnek JSON hazırlıyoruz.</span>
     lowered = user_message.lower()
     <span class="tok-keyword">if</span> <span class="tok-string">&quot;fatura&quot;</span> <span class="tok-keyword">in</span> lowered <span class="tok-keyword">or</span> <span class="tok-string">&quot;ödeme&quot;</span> <span class="tok-keyword">in</span> lowered:
         payload = {
@@ -856,13 +869,17 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
             <span class="tok-string">&quot;summary&quot;</span>: <span class="tok-string">&quot;Genel teknik destek talebi.&quot;</span>,
         }
 
+    <span class="tok-comment"># Python sözlüğünü Türkçe karakterleri koruyarak (ensure_ascii=False) JSON metnine çevirir.</span>
     <span class="tok-keyword">return</span> json.dumps(payload, ensure_ascii=<span class="tok-keyword">False</span>)
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># 1. Ayar nesnesini oluşturuyoruz (Temperature=0.0).</span>
     config = LLMRequestConfig(temperature=<span class="tok-number">0.0</span>)
+    <span class="tok-comment"># 2. Denemek için örnek bir kullanıcı destek mesajı yazıyoruz. (Değiştirip tekrar deneyebilirsiniz!)</span>
     user_ticket = <span class="tok-string">&quot;Kredi kartımdan bu ay iki kez fatura çekilmiş, acil kontrol eder misiniz?&quot;</span>
 
+    <span class="tok-comment"># 3. Simüle edilmiş LLM&#x27;den ham JSON alıp şema doğrulamasından geçiriyoruz.</span>
     raw_output = mock_structured_llm_call(user_ticket, config)
     validated = validate_ticket_schema(raw_output)
 
@@ -871,6 +888,7 @@ _WORD_PATTERN = re.compile(r<span class="tok-string">&quot;\w+|[^\w\s]&quot;</sp
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Tahmini Token Sayısı:&quot;</span>, estimate_tokens(user_ticket))
 
 
+<span class="tok-comment"># Bu dosya doğrudan terminalden çalıştırıldığında main() fonksiyonunu başlatır.</span>
 <span class="tok-keyword">if</span> __name__ == <span class="tok-string">&quot;__main__&quot;</span>:
     main()</code></pre>
       <div class="output-box">
@@ -946,44 +964,51 @@ Modül 2 Hands-On Lab: Tool Use, Function Calling ve Güvenli Agent Loop
 
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
-<span class="tok-keyword">import</span> threading
+<span class="tok-keyword">import</span> threading  <span class="tok-comment"># Birden fazla kullanıcı aynı anda eriştiğinde kilit (Lock) koymak için.</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
 <span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any, Callable
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> ToolDefinition:
+    <span class="tok-docstring">&quot;&quot;&quot;Bir aracın (Tool) kimlik kartı: adı, açıklaması ve çalıştırılacak Python fonksiyonu.&quot;&quot;&quot;</span>
+
     name: <span class="tok-builtin">str</span>
     description: <span class="tok-builtin">str</span>
-    handler: Callable[..., <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]
+    handler: Callable[..., <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]  <span class="tok-comment"># Çağrılabilir Python fonksiyonu referansı.</span>
 
 
 <span class="tok-keyword">class</span> ThreadSafeToolRegistry:
     <span class="tok-docstring">&quot;&quot;&quot;Birden fazla Thread aynı anda erişse bile güvenli kalan Tool kayıt defteri.&quot;&quot;&quot;</span>
 
     <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-comment"># RLock (Reentrant Lock): Aynı anda sadece 1 Thread&#x27;in sözlüğü değiştirmesine izin verir.</span>
         self._lock = threading.<span class="tok-builtin">RLock</span>()
-        self._tools: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, ToolDefinition] = {}
+        self._tools: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, ToolDefinition] = {}  <span class="tok-comment"># Kayıtlı araçları tutan sözlük.</span>
 
     <span class="tok-keyword">def</span> register(self, tool: ToolDefinition) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-comment"># &quot;with self._lock:&quot; bloğu bitince kilit otomatik açılır (hata olsa bile).</span>
         <span class="tok-keyword">with</span> self._lock:
             self._tools[tool.name] = tool
 
     <span class="tok-keyword">def</span> execute(self, name: <span class="tok-builtin">str</span>, **kwargs: Any) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+        <span class="tok-comment"># **kwargs: Fonksiyona gönderilen isimlendirilmiş parametreleri (ör. order_id=&quot;ORD-101&quot;) toplar.</span>
         <span class="tok-keyword">with</span> self._lock:
             tool = self._tools.get(name)
         <span class="tok-keyword">if</span> tool <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
             <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">False</span>, <span class="tok-string">&quot;error&quot;</span>: <span class="tok-string">f&quot;Bilinmeyen tool: {name}&quot;</span>}
         <span class="tok-keyword">try</span>:
-            <span class="tok-comment"># Tool çalışırken lock&#x27;u tutmuyoruz; böylece eşzamanlılık (Concurrency) engellenmez.</span>
+            <span class="tok-comment"># KRİTİK: Aracı çalıştırırken kilidi tutmuyoruz! Böylece diğer kullanıcılar beklemez.</span>
             result = tool.handler(**kwargs)
             <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">True</span>, <span class="tok-string">&quot;data&quot;</span>: result}
         <span class="tok-keyword">except</span> <span class="tok-builtin">Exception</span> <span class="tok-keyword">as</span> exc:
+            <span class="tok-comment"># Araç hata verse bile tüm Agent çökmez; hata mesajı düzenli bir sözlük olarak döner.</span>
             <span class="tok-keyword">return</span> {<span class="tok-string">&quot;ok&quot;</span>: <span class="tok-keyword">False</span>, <span class="tok-string">&quot;error&quot;</span>: <span class="tok-builtin">str</span>(exc)}
 
 
 <span class="tok-keyword">def</span> get_order_status(order_id: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
     <span class="tok-docstring">&quot;&quot;&quot;Örnek dış servis aracı (Tool): Sipariş durumunu sorgular.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># Gerçek projede burada SQL veritabanına veya REST API&#x27;ye istek atılır.</span>
     fake_db = {
         <span class="tok-string">&quot;ORD-101&quot;</span>: {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;Kargoda&quot;</span>, <span class="tok-string">&quot;eta_days&quot;</span>: <span class="tok-number">2</span>},
         <span class="tok-string">&quot;ORD-202&quot;</span>: {<span class="tok-string">&quot;status&quot;</span>: <span class="tok-string">&quot;Teslim Edildi&quot;</span>, <span class="tok-string">&quot;eta_days&quot;</span>: <span class="tok-number">0</span>},
@@ -995,21 +1020,24 @@ Modül 2 Hands-On Lab: Tool Use, Function Calling ve Güvenli Agent Loop
 
 <span class="tok-keyword">def</span> calculate_shipping_discount(order_total: <span class="tok-builtin">float</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
     <span class="tok-docstring">&quot;&quot;&quot;Örnek hesaplama aracı (Tool): Kargo indirimini kesin matematikle hesaplar.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># LLM matematikte yanılabilir; kesin kuralları her zaman Python Tool&#x27;u hesaplar.</span>
     free_shipping = order_total &gt;= <span class="tok-number">500.0</span>
     <span class="tok-keyword">return</span> {<span class="tok-string">&quot;free_shipping&quot;</span>: free_shipping, <span class="tok-string">&quot;shipping_fee&quot;</span>: <span class="tok-number">0.0</span> <span class="tok-keyword">if</span> free_shipping <span class="tok-keyword">else</span> <span class="tok-number">49.90</span>}
 
 
 <span class="tok-keyword">def</span> run_agent_loop(user_query: <span class="tok-builtin">str</span>, registry: ThreadSafeToolRegistry, max_steps: <span class="tok-builtin">int</span> = <span class="tok-number">3</span>) -&gt; <span class="tok-builtin">str</span>:
     <span class="tok-docstring">&quot;&quot;&quot;Basitleştirilmiş Think -&gt; Act -&gt; Observe Agent Loop.&quot;&quot;&quot;</span>
-    observations: <span class="tok-builtin">list</span>[<span class="tok-builtin">str</span>] = []
+    observations: <span class="tok-builtin">list</span>[<span class="tok-builtin">str</span>] = []  <span class="tok-comment"># Agent&#x27;ın önceki adımlarda gördüğü araç sonuçları.</span>
 
+    <span class="tok-comment"># max_steps sınırı sayesinde Agent asla sonsuz döngüye girip bütçenizi yakmaz.</span>
     <span class="tok-keyword">for</span> step <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, max_steps + <span class="tok-number">1</span>):
-        <span class="tok-comment"># 1. THINK: Hangi Tool çağrılmalı?</span>
+        <span class="tok-comment"># 1. THINK: Kullanıcı sorusunda &quot;ORD-&quot; geçiyorsa sipariş aracını seç.</span>
         <span class="tok-keyword">if</span> <span class="tok-string">&quot;ORD-&quot;</span> <span class="tok-keyword">in</span> user_query <span class="tok-keyword">and</span> <span class="tok-keyword">not</span> observations:
+            <span class="tok-comment"># Cümle içindeki &quot;ORD-101&quot; kodunu noktalama işaretlerinden temizleyip ayıklıyoruz.</span>
             order_id = <span class="tok-builtin">next</span>(word.strip(<span class="tok-string">&quot;.,?!&quot;</span>) <span class="tok-keyword">for</span> word <span class="tok-keyword">in</span> user_query.split() <span class="tok-keyword">if</span> word.startswith(<span class="tok-string">&quot;ORD-&quot;</span>))
-            <span class="tok-comment"># 2. ACT: Tool&#x27;u çağır</span>
+            <span class="tok-comment"># 2. ACT: Seçilen aracı güvenli kayıt defteri (Registry) üzerinden çalıştır.</span>
             tool_result = registry.execute(<span class="tok-string">&quot;get_order_status&quot;</span>, order_id=order_id)
-            <span class="tok-comment"># 3. OBSERVE: Sonucu kaydet</span>
+            <span class="tok-comment"># 3. OBSERVE: Gelen sonucu gözlem listesine kaydet ve kullanıcıya anlaşılır cevap üret.</span>
             observations.append(<span class="tok-string">f&quot;Adım {step} [get_order_status]: {tool_result}&quot;</span>)
             <span class="tok-keyword">if</span> tool_result[<span class="tok-string">&quot;ok&quot;</span>]:
                 info = tool_result[<span class="tok-string">&quot;data&quot;</span>]
@@ -1019,6 +1047,7 @@ Modül 2 Hands-On Lab: Tool Use, Function Calling ve Güvenli Agent Loop
                 )
             <span class="tok-keyword">return</span> <span class="tok-string">f&quot;Sipariş sorgulanamadı: {tool_result[&#x27;error&#x27;]}&quot;</span>
 
+        <span class="tok-comment"># Kullanıcı kargo soruyorsa kargo hesaplama aracını çağır.</span>
         <span class="tok-keyword">if</span> <span class="tok-string">&quot;kargo&quot;</span> <span class="tok-keyword">in</span> user_query.lower():
             tool_result = registry.execute(<span class="tok-string">&quot;calculate_shipping_discount&quot;</span>, order_total=<span class="tok-number">650.0</span>)
             <span class="tok-keyword">return</span> <span class="tok-string">f&quot;Kargo hesaplaması tamamlandı: {tool_result[&#x27;data&#x27;]}&quot;</span>
@@ -1027,12 +1056,14 @@ Modül 2 Hands-On Lab: Tool Use, Function Calling ve Güvenli Agent Loop
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># 1. Araç kayıt defterini oluştur ve iki farklı Tool kaydet.</span>
     registry = ThreadSafeToolRegistry()
     registry.register(ToolDefinition(<span class="tok-string">&quot;get_order_status&quot;</span>, <span class="tok-string">&quot;Sipariş durumunu getirir&quot;</span>, get_order_status))
     registry.register(
         ToolDefinition(<span class="tok-string">&quot;calculate_shipping_discount&quot;</span>, <span class="tok-string">&quot;Kargo ücretini hesaplar&quot;</span>, calculate_shipping_discount)
     )
 
+    <span class="tok-comment"># 2. Farklı sorularla Agent Loop&#x27;u test et. (ORD-999 yazarak hata yönetimini de deneyebilirsiniz!)</span>
     <span class="tok-builtin">print</span>(run_agent_loop(<span class="tok-string">&quot;Merhaba, ORD-101 numaralı siparişim nerede?&quot;</span>, registry))
     <span class="tok-builtin">print</span>(run_agent_loop(<span class="tok-string">&quot;650 TL alışverişte kargo ücreti ne kadar?&quot;</span>, registry))
 
@@ -1112,19 +1143,24 @@ Modül 3 Hands-On Lab: Agent Memory &amp; State Management
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
 <span class="tok-keyword">import</span> threading
-<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">deque</span>
+<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">deque</span>  <span class="tok-comment"># Sabit boyutlu (maxlen) yüksek hızlı kuyruk veri yapısı.</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">field</span>
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> Message:
-    role: <span class="tok-builtin">str</span>
-    content: <span class="tok-builtin">str</span>
+    <span class="tok-docstring">&quot;&quot;&quot;Tek bir sohbet mesajı (değiştirilemez / Immutable).&quot;&quot;&quot;</span>
+
+    role: <span class="tok-builtin">str</span>     <span class="tok-comment"># &quot;user&quot; veya &quot;assistant&quot;</span>
+    content: <span class="tok-builtin">str</span>  <span class="tok-comment"># Mesajın metni</span>
 
 
 <span class="tok-decorator">@dataclass</span>(slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> SessionState:
+    <span class="tok-docstring">&quot;&quot;&quot;Tek bir kullanıcı oturumuna (Session) ait izole bellek kutusu.&quot;&quot;&quot;</span>
+
     session_id: <span class="tok-builtin">str</span>
+    <span class="tok-comment"># field(default_factory=...): Her yeni oturum için taze, birbirinden bağımsız bir kuyruk açar.</span>
     short_term: <span class="tok-builtin">deque</span>[Message] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-keyword">lambda</span>: <span class="tok-builtin">deque</span>(maxlen=<span class="tok-number">6</span>))
     long_term_facts: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">str</span>] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-builtin">dict</span>)
 
@@ -1133,26 +1169,30 @@ Modül 3 Hands-On Lab: Agent Memory &amp; State Management
     <span class="tok-docstring">&quot;&quot;&quot;Her kullanıcı oturumu (Session) için izole ve Thread-Safe bellek yöneticisi.&quot;&quot;&quot;</span>
 
     <span class="tok-keyword">def</span> __init__(self, max_short_term_messages: <span class="tok-builtin">int</span> = <span class="tok-number">6</span>) -&gt; <span class="tok-keyword">None</span>:
-        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._lock = threading.<span class="tok-builtin">RLock</span>()  <span class="tok-comment"># Eşzamanlı erişimlerde veri bozulmasını önler.</span>
         self._max_messages = max_short_term_messages
-        self._sessions: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, SessionState] = {}
+        self._sessions: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, SessionState] = {}  <span class="tok-comment"># session_id -&gt; SessionState eşleşmesi.</span>
 
     <span class="tok-keyword">def</span> _get_or_create(self, session_id: <span class="tok-builtin">str</span>) -&gt; SessionState:
+        <span class="tok-docstring">&quot;&quot;&quot;Oturum daha önce açılmadıysa yeni bir izole SessionState oluşturur.&quot;&quot;&quot;</span>
         state = self._sessions.get(session_id)
         <span class="tok-keyword">if</span> state <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
             state = SessionState(
                 session_id=session_id,
+                <span class="tok-comment"># maxlen dolduğunda yeni mesaj gelince en eski mesaj otomatik silinir.</span>
                 short_term=<span class="tok-builtin">deque</span>(maxlen=self._max_messages),
             )
             self._sessions[session_id] = state
         <span class="tok-keyword">return</span> state
 
     <span class="tok-keyword">def</span> add_message(self, session_id: <span class="tok-builtin">str</span>, role: <span class="tok-builtin">str</span>, content: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Kısa süreli belleğe (Short-Term Memory) yeni mesaj ekler.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             state = self._get_or_create(session_id)
             state.short_term.append(Message(role=role, content=content))
 
     <span class="tok-keyword">def</span> save_long_term_fact(self, session_id: <span class="tok-builtin">str</span>, key: <span class="tok-builtin">str</span>, value: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Kullanıcıya dair kalıcı bilgiyi (Long-Term Memory) kaydeder.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             state = self._get_or_create(session_id)
             state.long_term_facts[key] = value
@@ -1161,6 +1201,7 @@ Modül 3 Hands-On Lab: Agent Memory &amp; State Management
         <span class="tok-docstring">&quot;&quot;&quot;Dışarıya kopya (snapshot) döndürür; böylece dış kod iç state&#x27;i bozamaz.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             state = self._get_or_create(session_id)
+            <span class="tok-comment"># dict(...) ve list(...) çağrıları orijinal belleğin güvenli birer kopyasını üretir.</span>
             <span class="tok-keyword">return</span> {
                 <span class="tok-string">&quot;session_id&quot;</span>: state.session_id,
                 <span class="tok-string">&quot;long_term_facts&quot;</span>: <span class="tok-builtin">dict</span>(state.long_term_facts),
@@ -1169,15 +1210,19 @@ Modül 3 Hands-On Lab: Agent Memory &amp; State Management
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># En fazla 4 kısa süreli mesaj tutan bellek yöneticisi başlatıyoruz.</span>
     memory = ThreadSafeMemoryManager(max_short_term_messages=<span class="tok-number">4</span>)
     session = <span class="tok-string">&quot;user-junior-01&quot;</span>
 
+    <span class="tok-comment"># Kalıcı tercihleri (Long-Term) kaydediyoruz; mesajlar dolsa bile bunlar silinmez.</span>
     memory.save_long_term_fact(session, <span class="tok-string">&quot;preferred_language&quot;</span>, <span class="tok-string">&quot;Python&quot;</span>)
     memory.save_long_term_fact(session, <span class="tok-string">&quot;experience_level&quot;</span>, <span class="tok-string">&quot;Junior&quot;</span>)
 
+    <span class="tok-comment"># 6 mesaj ekliyoruz; maxlen=4 olduğu için ilk 2 mesaj otomatik düşecek!</span>
     <span class="tok-keyword">for</span> i <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, <span class="tok-number">7</span>):
         memory.add_message(session, <span class="tok-string">&quot;user&quot;</span>, <span class="tok-string">f&quot;Soru {i}: Agent Memory nasıl çalışır?&quot;</span>)
 
+    <span class="tok-comment"># Güvenli kopyayı (Snapshot) alıp ekrana yazdırıyoruz.</span>
     snapshot = memory.build_context_snapshot(session)
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Long-Term Facts:&quot;</span>, snapshot[<span class="tok-string">&quot;long_term_facts&quot;</span>])
     <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;Short-Term Mesaj Sayısı (maxlen=4): {len(snapshot[&#x27;recent_messages&#x27;])}&quot;</span>)
@@ -1264,32 +1309,40 @@ Modül 4 Hands-On Lab: RAG, Vector Database Mantığı ve Agentic RAG
 
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
-<span class="tok-keyword">import</span> math
+<span class="tok-keyword">import</span> math  <span class="tok-comment"># Karekök (sqrt) ile vektör uzunluğunu normalize etmek için.</span>
 <span class="tok-keyword">import</span> re
 <span class="tok-keyword">import</span> threading
-<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">Counter</span>
+<span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">Counter</span>  <span class="tok-comment"># Her kelimenin metinde kaç kez geçtiğini hızlıca sayar.</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
 
+<span class="tok-comment"># Türkçe karakterleri de kapsayan kelime ayırıcı Regex (1 kez derlenir).</span>
 _TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİÖŞÜ0-9]+&quot;</span>)
 
 
 <span class="tok-keyword">def</span> text_to_vector(text: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]:
     <span class="tok-docstring">&quot;&quot;&quot;Eğitim amaçlı hafif Term-Frequency vektörü. Gerçek sistemde Embedding API kullanılır.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># 1. Metindeki tüm kelimeleri küçük harfe çevirip listeye alıyoruz.</span>
     tokens = [t.lower() <span class="tok-keyword">for</span> t <span class="tok-keyword">in</span> _TOKEN_RE.findall(text)]
+    <span class="tok-comment"># 2. Hangi kelime kaç kez geçmiş sayıyoruz (ör. {&quot;iade&quot;: 2, &quot;gün&quot;: 1}).</span>
     counts = <span class="tok-builtin">Counter</span>(tokens)
+    <span class="tok-comment"># 3. Vektörü 1 birim uzunluğa normalize ediyoruz (Cosine Similarity hesabı için).</span>
     norm = math.sqrt(<span class="tok-builtin">sum</span>(v * v <span class="tok-keyword">for</span> v <span class="tok-keyword">in</span> counts.values())) <span class="tok-keyword">or</span> <span class="tok-number">1.0</span>
     <span class="tok-keyword">return</span> {k: v / norm <span class="tok-keyword">for</span> k, v <span class="tok-keyword">in</span> counts.items()}
 
 
 <span class="tok-keyword">def</span> cosine_similarity(vec_a: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>], vec_b: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]) -&gt; <span class="tok-builtin">float</span>:
-    <span class="tok-docstring">&quot;&quot;&quot;İki normalize vektör arasındaki benzerlik skoru (0.0 - 1.0).&quot;&quot;&quot;</span>
+    <span class="tok-docstring">&quot;&quot;&quot;İki normalize vektör arasındaki benzerlik skoru (0.0 = alakasız, 1.0 = birebir aynı).&quot;&quot;&quot;</span>
+    <span class="tok-comment"># Performans optimizasyonu: Her zaman daha az elemanı olan sözlükte döngü kurarız.</span>
     <span class="tok-keyword">if</span> <span class="tok-builtin">len</span>(vec_a) &gt; <span class="tok-builtin">len</span>(vec_b):
         vec_a, vec_b = vec_b, vec_a
+    <span class="tok-comment"># Ortak kelimelerin ağırlıklarını çarpıp topluyoruz (Dot Product).</span>
     <span class="tok-keyword">return</span> <span class="tok-builtin">sum</span>(val * vec_b.get(key, <span class="tok-number">0.0</span>) <span class="tok-keyword">for</span> key, val <span class="tok-keyword">in</span> vec_a.items())
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> DocumentChunk:
+    <span class="tok-docstring">&quot;&quot;&quot;Veritabanında saklanan tek bir metin parçası (Chunk) ve onun sayısal vektörü.&quot;&quot;&quot;</span>
+
     chunk_id: <span class="tok-builtin">str</span>
     content: <span class="tok-builtin">str</span>
     vector: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">float</span>]
@@ -1303,20 +1356,24 @@ _TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİ
         self._chunks: <span class="tok-builtin">list</span>[DocumentChunk] = []
 
     <span class="tok-keyword">def</span> add_document(self, doc_id: <span class="tok-builtin">str</span>, text: <span class="tok-builtin">str</span>, chunk_size: <span class="tok-builtin">int</span> = <span class="tok-number">120</span>) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Uzun metni chunk_size karakterlik parçalara böler (Chunking) ve vektörleştirir.&quot;&quot;&quot;</span>
         parts = [text[i : i + chunk_size].strip() <span class="tok-keyword">for</span> i <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">0</span>, <span class="tok-builtin">len</span>(text), chunk_size)]
         new_chunks = [
             DocumentChunk(<span class="tok-string">f&quot;{doc_id}-{idx}&quot;</span>, part, text_to_vector(part))
             <span class="tok-keyword">for</span> idx, part <span class="tok-keyword">in</span> <span class="tok-builtin">enumerate</span>(parts)
             <span class="tok-keyword">if</span> part
         ]
+        <span class="tok-comment"># Kilit yalnızca listeye yeni parçaları eklerken tutulur.</span>
         <span class="tok-keyword">with</span> self._lock:
             self._chunks.extend(new_chunks)
 
     <span class="tok-keyword">def</span> search(self, query: <span class="tok-builtin">str</span>, top_k: <span class="tok-builtin">int</span> = <span class="tok-number">2</span>) -&gt; <span class="tok-builtin">list</span>[<span class="tok-builtin">tuple</span>[<span class="tok-builtin">float</span>, DocumentChunk]]:
+        <span class="tok-docstring">&quot;&quot;&quot;Sorguyu vektöre çevirir ve en yüksek benzerlik skoruna sahip top_k parçayı döndürür.&quot;&quot;&quot;</span>
         q_vec = text_to_vector(query)
         <span class="tok-keyword">with</span> self._lock:
-            snapshot = <span class="tok-builtin">list</span>(self._chunks)
+            snapshot = <span class="tok-builtin">list</span>(self._chunks)  <span class="tok-comment"># Güvenli kopya üzerinde arama yapıyoruz.</span>
         scored = [(cosine_similarity(q_vec, chunk.vector), chunk) <span class="tok-keyword">for</span> chunk <span class="tok-keyword">in</span> snapshot]
+        <span class="tok-comment"># En yüksek skordan en düşüğe doğru sıralıyoruz.</span>
         scored.sort(key=<span class="tok-keyword">lambda</span> item: item[<span class="tok-number">0</span>], reverse=<span class="tok-keyword">True</span>)
         <span class="tok-keyword">return</span> scored[:top_k]
 
@@ -1327,12 +1384,13 @@ _TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİ
     1. İlk sorguyu çalıştır.
     2. Benzerlik skoru eşiğin altındaysa sorguyu genişlet (Query Rewrite) ve tekrar ara.
     &quot;&quot;&quot;</span>
+    <span class="tok-comment"># Adım 1: Kullanıcının ham sorusuyla ilk aramayı yap.</span>
     results = store.search(user_query, top_k=<span class="tok-number">1</span>)
     <span class="tok-keyword">if</span> results <span class="tok-keyword">and</span> results[<span class="tok-number">0</span>][<span class="tok-number">0</span>] &gt;= min_score:
         score, chunk = results[<span class="tok-number">0</span>]
         <span class="tok-keyword">return</span> <span class="tok-string">f&quot;[İlk Aramada Bulundu | Skor: {score:.2f}] -&gt; {chunk.content}&quot;</span>
 
-    <span class="tok-comment"># Query Rewrite (Sorgu İyileştirme)</span>
+    <span class="tok-comment"># Adım 2: Skor zayıfsa (ör. kullanıcı teknik terim bilmiyorsa) sorguyu zenginleştir.</span>
     rewritten_query = <span class="tok-string">f&quot;{user_query} iade politikası süre gün kargo&quot;</span>
     retry_results = store.search(rewritten_query, top_k=<span class="tok-number">1</span>)
     <span class="tok-keyword">if</span> retry_results <span class="tok-keyword">and</span> retry_results[<span class="tok-number">0</span>][<span class="tok-number">0</span>] &gt; <span class="tok-number">0.0</span>:
@@ -1344,6 +1402,7 @@ _TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİ
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># 1. Yerel Vector Store oluştur ve iki şirket dokümanı yükle.</span>
     store = ThreadSafeVectorStore()
     store.add_document(
         <span class="tok-string">&quot;policy&quot;</span>,
@@ -1354,6 +1413,7 @@ _TOKEN_RE = re.compile(r<span class="tok-string">&quot;[a-zA-ZçğıöşüÇĞİ
         <span class="tok-string">&quot;Teknik destek ekibi hafta içi 09:00 - 18:00 saatleri arasında canlı sohbet hizmeti verir.&quot;</span>,
     )
 
+    <span class="tok-comment"># 2. Net soru ilk seferde bulunur; belirsiz soru ise Query Rewrite ile kurtarılır.</span>
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Sorgu 1 (Net):&quot;</span>, agentic_rag_search(store, <span class="tok-string">&quot;iade politikası kaç gün?&quot;</span>))
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Sorgu 2 (Belirsiz):&quot;</span>, agentic_rag_search(store, <span class="tok-string">&quot;beğenmezsem geri verebilir miyim?&quot;</span>))
 
@@ -1431,7 +1491,7 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
 
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
-<span class="tok-keyword">import</span> json
+<span class="tok-keyword">import</span> json  <span class="tok-comment"># JSON-RPC 2.0 isteklerini okuyup yanıt üretmek için.</span>
 <span class="tok-keyword">import</span> threading
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
 <span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Any, Callable
@@ -1439,10 +1499,12 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> MCPToolSpec:
-    name: <span class="tok-builtin">str</span>
-    description: <span class="tok-builtin">str</span>
-    input_schema: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]
-    handler: Callable[[<span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]], <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]
+    <span class="tok-docstring">&quot;&quot;&quot;MCP Server üzerinde dış dünyaya açılan tek bir aracın standart tanımı.&quot;&quot;&quot;</span>
+
+    name: <span class="tok-builtin">str</span>                                         <span class="tok-comment"># Aracın benzersiz adı</span>
+    description: <span class="tok-builtin">str</span>                                  <span class="tok-comment"># LLM&#x27;in okuyacağı görev açıklaması</span>
+    input_schema: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]                      <span class="tok-comment"># Aracın beklediği parametrelerin JSON şeması</span>
+    handler: Callable[[<span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]], <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]]  <span class="tok-comment"># Gerçek işi yapan Python fonksiyonu</span>
 
 
 <span class="tok-keyword">class</span> SimpleMCPServer:
@@ -1450,19 +1512,23 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
 
     <span class="tok-keyword">def</span> __init__(self, server_name: <span class="tok-builtin">str</span>) -&gt; <span class="tok-keyword">None</span>:
         self.server_name = server_name
-        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._lock = threading.<span class="tok-builtin">RLock</span>()  <span class="tok-comment"># Eşzamanlı araç kaydı ve okumasını korur.</span>
         self._tools: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, MCPToolSpec] = {}
 
     <span class="tok-keyword">def</span> register_tool(self, spec: MCPToolSpec) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Sunucuya yeni bir MCP aracı (Tool) kaydeder.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             self._tools[spec.name] = spec
 
     <span class="tok-keyword">def</span> handle_json_rpc(self, raw_request: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">str</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Gelen standart JSON-RPC 2.0 mesajını okur, ilgili MCP metodunu çalıştırır.&quot;&quot;&quot;</span>
+        <span class="tok-comment"># 1. İstemciden (MCP Client) gelen JSON metnini Python sözlüğüne çeviriyoruz.</span>
         req = json.loads(raw_request)
-        req_id = req.get(<span class="tok-string">&quot;id&quot;</span>)
-        method = req.get(<span class="tok-string">&quot;method&quot;</span>)
-        params = req.get(<span class="tok-string">&quot;params&quot;</span>, {})
+        req_id = req.get(<span class="tok-string">&quot;id&quot;</span>)          <span class="tok-comment"># Hangi isteğe yanıt verdiğimizi eşleştiren kimlik.</span>
+        method = req.get(<span class="tok-string">&quot;method&quot;</span>)      <span class="tok-comment"># &quot;tools/list&quot; veya &quot;tools/call&quot;</span>
+        params = req.get(<span class="tok-string">&quot;params&quot;</span>, {})  <span class="tok-comment"># Çağrı parametreleri (yoksa boş sözlük).</span>
 
+        <span class="tok-comment"># 2. KEŞİF (Tool Discovery): İstemci &quot;Hangi araçların var?&quot; diye soruyor.</span>
         <span class="tok-keyword">if</span> method == <span class="tok-string">&quot;tools/list&quot;</span>:
             <span class="tok-keyword">with</span> self._lock:
                 tools_meta = [
@@ -1475,19 +1541,23 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
                 ]
             <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;result&quot;</span>: {<span class="tok-string">&quot;tools&quot;</span>: tools_meta}}, ensure_ascii=<span class="tok-keyword">False</span>)
 
+        <span class="tok-comment"># 3. ÇALIŞTIRMA (Tool Execution): İstemci belirli bir aracı argümanlarıyla çağırıyor.</span>
         <span class="tok-keyword">if</span> method == <span class="tok-string">&quot;tools/call&quot;</span>:
             tool_name = params.get(<span class="tok-string">&quot;name&quot;</span>)
             arguments = params.get(<span class="tok-string">&quot;arguments&quot;</span>, {})
             <span class="tok-keyword">with</span> self._lock:
                 spec = self._tools.get(tool_name)
             <span class="tok-keyword">if</span> spec <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
+                <span class="tok-comment"># Standart JSON-RPC -32601 hata kodu: &quot;Method/Tool bulunamadı&quot;.</span>
                 <span class="tok-keyword">return</span> json.dumps(
                     {<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;error&quot;</span>: {<span class="tok-string">&quot;code&quot;</span>: -<span class="tok-number">32601</span>, <span class="tok-string">&quot;message&quot;</span>: <span class="tok-string">&quot;Tool not found&quot;</span>}},
                     ensure_ascii=<span class="tok-keyword">False</span>,
                 )
+            <span class="tok-comment"># Aracı kilit dışında çalıştırıp sonucu standart JSON-RPC formatında döndürüyoruz.</span>
             output = spec.handler(arguments)
             <span class="tok-keyword">return</span> json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;result&quot;</span>: output}, ensure_ascii=<span class="tok-keyword">False</span>)
 
+        <span class="tok-comment"># Desteklenmeyen bir metot adı geldiyse standart hata döndür.</span>
         <span class="tok-keyword">return</span> json.dumps(
             {<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: req_id, <span class="tok-string">&quot;error&quot;</span>: {<span class="tok-string">&quot;code&quot;</span>: -<span class="tok-number">32601</span>, <span class="tok-string">&quot;message&quot;</span>: <span class="tok-string">&quot;Method not found&quot;</span>}},
             ensure_ascii=<span class="tok-keyword">False</span>,
@@ -1495,12 +1565,14 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
 
 
 <span class="tok-keyword">def</span> check_inventory(args: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Any]:
+    <span class="tok-docstring">&quot;&quot;&quot;Örnek arka uç (Backend) fonksiyonu: Verilen ürün kodunun (SKU) stoğunu döndürür.&quot;&quot;&quot;</span>
     sku = <span class="tok-builtin">str</span>(args.get(<span class="tok-string">&quot;sku&quot;</span>, <span class="tok-string">&quot;&quot;</span>))
     stock = {<span class="tok-string">&quot;SKU-LAPTOP-01&quot;</span>: <span class="tok-number">12</span>, <span class="tok-string">&quot;SKU-MOUSE-02&quot;</span>: <span class="tok-number">0</span>}
     <span class="tok-keyword">return</span> {<span class="tok-string">&quot;sku&quot;</span>: sku, <span class="tok-string">&quot;in_stock&quot;</span>: stock.get(sku, <span class="tok-number">0</span>)}
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># 1. Bir MCP Server ayağa kaldırıp depo stok aracını kaydediyoruz.</span>
     server = SimpleMCPServer(<span class="tok-string">&quot;warehouse-mcp&quot;</span>)
     server.register_tool(
         MCPToolSpec(
@@ -1511,11 +1583,11 @@ Modül 5 Hands-On Lab: Model Context Protocol (MCP) Mimarisi
         )
     )
 
-    <span class="tok-comment"># 1. MCP Client önce sunucuda hangi Tool&#x27;lar var diye keşif yapar (tools/list).</span>
+    <span class="tok-comment"># 2. MCP Client önce sunucuda hangi Tool&#x27;lar var diye keşif yapar (tools/list).</span>
     list_req = json.dumps({<span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>, <span class="tok-string">&quot;id&quot;</span>: <span class="tok-number">1</span>, <span class="tok-string">&quot;method&quot;</span>: <span class="tok-string">&quot;tools/list&quot;</span>})
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;MCP tools/list Yanıtı:&quot;</span>, server.handle_json_rpc(list_req))
 
-    <span class="tok-comment"># 2. MCP Client standart formatla Tool çağırır (tools/call).</span>
+    <span class="tok-comment"># 3. MCP Client standart formatla Tool çağırır (tools/call). (SKU-MOUSE-02 ile de deneyin!)</span>
     call_req = json.dumps(
         {
             <span class="tok-string">&quot;jsonrpc&quot;</span>: <span class="tok-string">&quot;2.0&quot;</span>,
@@ -1616,67 +1688,77 @@ Modül 6 Hands-On Lab: Planning &amp; Multi-Agent Stateful Workflow (LangGraph M
 
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
+<span class="tok-comment"># replace: frozen (değiştirilemez) bir dataclass&#x27;tan tek bir alanı güncellenmiş yeni kopya üretir.</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">replace</span>
 <span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Callable
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> WorkflowState:
+    <span class="tok-docstring">&quot;&quot;&quot;Tüm düğümler (Nodes) arasında taşınan değiştirilemez (Immutable) iş akışı durumu.&quot;&quot;&quot;</span>
+
     topic: <span class="tok-builtin">str</span>
-    plan: <span class="tok-builtin">tuple</span>[<span class="tok-builtin">str</span>, ...] = ()
+    plan: <span class="tok-builtin">tuple</span>[<span class="tok-builtin">str</span>, ...] = ()  <span class="tok-comment"># list yerine tuple kullanıyoruz çünkü tuple değiştirilemezdir!</span>
     draft: <span class="tok-builtin">str</span> = <span class="tok-string">&quot;&quot;</span>
     review_passed: <span class="tok-builtin">bool</span> = <span class="tok-keyword">False</span>
     revision_count: <span class="tok-builtin">int</span> = <span class="tok-number">0</span>
 
 
 <span class="tok-keyword">def</span> planner_node(state: WorkflowState) -&gt; WorkflowState:
-    <span class="tok-docstring">&quot;&quot;&quot;1. Ajan (Planner): Konuyu alt adımlara böler.&quot;&quot;&quot;</span>
+    <span class="tok-docstring">&quot;&quot;&quot;1. Ajan (Planner): Büyük konuyu 3 net alt adıma böler.&quot;&quot;&quot;</span>
     steps = (
         <span class="tok-string">f&quot;{state.topic} nedir?&quot;</span>,
         <span class="tok-string">&quot;Neden Production ortamında kritik önem taşır?&quot;</span>,
         <span class="tok-string">&quot;Basit bir uygulama örneği&quot;</span>,
     )
+    <span class="tok-comment"># Mevcut state&#x27;i bozmuyoruz; yalnızca &#x27;plan&#x27; alanı dolu yeni bir WorkflowState döndürüyoruz.</span>
     <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, plan=steps)
 
 
 <span class="tok-keyword">def</span> writer_node(state: WorkflowState) -&gt; WorkflowState:
     <span class="tok-docstring">&quot;&quot;&quot;2. Ajan (Writer): Plana göre taslak metin üretir.&quot;&quot;&quot;</span>
     <span class="tok-keyword">if</span> state.revision_count == <span class="tok-number">0</span>:
-        <span class="tok-comment"># İlk taslakta bilerek kısa bırakıyoruz ki Reviewer geri çevirsin.</span>
+        <span class="tok-comment"># İlk taslağı bilerek kısa bırakıyoruz ki Reviewer&#x27;ın reddedip geri gönderdiğini görelim.</span>
         draft = <span class="tok-string">f&quot;{state.topic} önemlidir.&quot;</span>
     <span class="tok-keyword">else</span>:
+        <span class="tok-comment"># 2. turda (revizyonda) tüm plan maddelerini ve &#x27;Örnek:&#x27; bölümünü ekleyerek düzeltiyoruz.</span>
         bullet_text = <span class="tok-string">&quot; | &quot;</span>.join(state.plan)
         draft = <span class="tok-string">f&quot;{state.topic} kapsamlı özet -&gt; {bullet_text}. Örnek: State izole edilmelidir.&quot;</span>
     <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, draft=draft, revision_count=state.revision_count + <span class="tok-number">1</span>)
 
 
 <span class="tok-keyword">def</span> reviewer_node(state: WorkflowState) -&gt; WorkflowState:
-    <span class="tok-docstring">&quot;&quot;&quot;3. Ajan (Reviewer): Taslağın kalite kriterini kontrol eder.&quot;&quot;&quot;</span>
+    <span class="tok-docstring">&quot;&quot;&quot;3. Ajan (Reviewer): Taslağın kalite kriterlerine uyup uymadığını denetler.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># Kalite kuralı: Taslak en az 50 karakter olmalı VE içinde &quot;Örnek:&quot; kelimesi geçmeli.</span>
     passed = <span class="tok-builtin">len</span>(state.draft) &gt;= <span class="tok-number">50</span> <span class="tok-keyword">and</span> <span class="tok-string">&quot;Örnek:&quot;</span> <span class="tok-keyword">in</span> state.draft
     <span class="tok-keyword">return</span> <span class="tok-builtin">replace</span>(state, review_passed=passed)
 
 
 <span class="tok-keyword">def</span> run_stateful_graph(initial_state: WorkflowState, max_revisions: <span class="tok-builtin">int</span> = <span class="tok-number">3</span>) -&gt; WorkflowState:
     <span class="tok-docstring">&quot;&quot;&quot;LangGraph benzeri koşullu geçişli (Conditional Edge) yürütme motoru.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># Graf üzerindeki tüm düğümleri (Nodes) isim -&gt; fonksiyon sözlüğü olarak tanımlıyoruz.</span>
     nodes: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, Callable[[WorkflowState], WorkflowState]] = {
         <span class="tok-string">&quot;planner&quot;</span>: planner_node,
         <span class="tok-string">&quot;writer&quot;</span>: writer_node,
         <span class="tok-string">&quot;reviewer&quot;</span>: reviewer_node,
     }
 
-    current_node = <span class="tok-string">&quot;planner&quot;</span>
+    current_node = <span class="tok-string">&quot;planner&quot;</span>  <span class="tok-comment"># Akış her zaman &#x27;planner&#x27; düğümünden başlar.</span>
     state = initial_state
 
+    <span class="tok-comment"># &quot;END&quot; düğümüne ulaşana kadar grafı adım adım yürütüyoruz.</span>
     <span class="tok-keyword">while</span> current_node != <span class="tok-string">&quot;END&quot;</span>:
         <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[GRAPH] Çalıştırılan Node: {current_node}&quot;</span>)
+        <span class="tok-comment"># Aktif düğümün fonksiyonunu çağırıp güncellenmiş yeni State&#x27;i alıyoruz.</span>
         state = nodes[current_node](state)
 
-        <span class="tok-comment"># Edge (Geçiş) Kuralları</span>
+        <span class="tok-comment"># Edge (Geçiş) Kuralları: Bir sonraki düğüm hangisi olacak?</span>
         <span class="tok-keyword">if</span> current_node == <span class="tok-string">&quot;planner&quot;</span>:
             current_node = <span class="tok-string">&quot;writer&quot;</span>
         <span class="tok-keyword">elif</span> current_node == <span class="tok-string">&quot;writer&quot;</span>:
             current_node = <span class="tok-string">&quot;reviewer&quot;</span>
         <span class="tok-keyword">elif</span> current_node == <span class="tok-string">&quot;reviewer&quot;</span>:
+            <span class="tok-comment"># Conditional Edge: Onaylandıysa veya revizyon hakkı bittiyse bitir; yoksa Writer&#x27;a dön!</span>
             <span class="tok-keyword">if</span> state.review_passed <span class="tok-keyword">or</span> state.revision_count &gt;= max_revisions:
                 current_node = <span class="tok-string">&quot;END&quot;</span>
             <span class="tok-keyword">else</span>:
@@ -1687,6 +1769,7 @@ Modül 6 Hands-On Lab: Planning &amp; Multi-Agent Stateful Workflow (LangGraph M
 
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
+    <span class="tok-comment"># Başlangıç konusunu verip grafı başlatıyoruz. (topic metnini değiştirip tekrar çalıştırabilirsiniz!)</span>
     final_state = run_stateful_graph(WorkflowState(topic=<span class="tok-string">&quot;Agentic AI State Management&quot;</span>))
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;\n--- SONUÇ ---&quot;</span>)
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Onay Durumu:&quot;</span>, final_state.review_passed)
@@ -1786,16 +1869,18 @@ Modül 7 Hands-On Lab: Production-Ready Engineering
 <span class="tok-keyword">from</span> __future__ <span class="tok-keyword">import</span> annotations
 
 <span class="tok-keyword">import</span> threading
-<span class="tok-keyword">import</span> time
+<span class="tok-keyword">import</span> time  <span class="tok-comment"># Milisaniye hassasiyetinde süre ölçmek (perf_counter) ve beklemek (sleep) için.</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>
 <span class="tok-keyword">from</span> typing <span class="tok-keyword">import</span> Callable
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> TraceEvent:
+    <span class="tok-docstring">&quot;&quot;&quot;Uçağın kara kutusundaki tek bir kayıt satırı (Span): Ne çalıştı, kaç ms sürdü?&quot;&quot;&quot;</span>
+
     span_name: <span class="tok-builtin">str</span>
     duration_ms: <span class="tok-builtin">float</span>
-    status: <span class="tok-builtin">str</span>
+    status: <span class="tok-builtin">str</span>   <span class="tok-comment"># &quot;OK&quot; veya &quot;ERROR&quot;</span>
     detail: <span class="tok-builtin">str</span>
 
 
@@ -1807,10 +1892,12 @@ Modül 7 Hands-On Lab: Production-Ready Engineering
         self._events: <span class="tok-builtin">list</span>[TraceEvent] = []
 
     <span class="tok-keyword">def</span> record(self, event: TraceEvent) -&gt; <span class="tok-keyword">None</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Yeni bir izleme kaydını güvenli biçimde listeye ekler.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             self._events.append(event)
 
     <span class="tok-keyword">def</span> snapshot(self) -&gt; <span class="tok-builtin">list</span>[TraceEvent]:
+        <span class="tok-docstring">&quot;&quot;&quot;Kayıtların güvenli bir kopyasını döndürür.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             <span class="tok-keyword">return</span> <span class="tok-builtin">list</span>(self._events)
 
@@ -1822,19 +1909,23 @@ Modül 7 Hands-On Lab: Production-Ready Engineering
     max_retries: <span class="tok-builtin">int</span> = <span class="tok-number">2</span>,
 ) -&gt; <span class="tok-builtin">str</span>:
     <span class="tok-docstring">&quot;&quot;&quot;Geçici API hatalarında Retry yapar; başarısız olursa Fallback modele geçer.&quot;&quot;&quot;</span>
+    <span class="tok-comment"># 1 ilk deneme + max_retries tekrar denemesi = toplam max_retries + 1 tur.</span>
     <span class="tok-keyword">for</span> attempt <span class="tok-keyword">in</span> <span class="tok-builtin">range</span>(<span class="tok-number">1</span>, max_retries + <span class="tok-number">2</span>):
-        start = time.perf_counter()
+        start = time.perf_counter()  <span class="tok-comment"># Yüksek hassasiyetli kronometreyi başlat.</span>
         <span class="tok-keyword">try</span>:
             result = primary_fn()
-            elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
+            elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>  <span class="tok-comment"># Saniyeyi milisaniyeye çevir.</span>
             tracer.record(TraceEvent(<span class="tok-string">&quot;primary_llm&quot;</span>, elapsed, <span class="tok-string">&quot;OK&quot;</span>, <span class="tok-string">f&quot;attempt={attempt}&quot;</span>))
             <span class="tok-keyword">return</span> result
         <span class="tok-keyword">except</span> <span class="tok-builtin">RuntimeError</span> <span class="tok-keyword">as</span> exc:
+            <span class="tok-comment"># Hata alındığında süreyi ve hata mesajını kara kutuya (Tracer) yazıyoruz.</span>
             elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
             tracer.record(TraceEvent(<span class="tok-string">&quot;primary_llm&quot;</span>, elapsed, <span class="tok-string">&quot;ERROR&quot;</span>, <span class="tok-string">f&quot;attempt={attempt}: {exc}&quot;</span>))
             <span class="tok-keyword">if</span> attempt &lt;= max_retries:
-                time.sleep(<span class="tok-number">0.05</span> * attempt)  <span class="tok-comment"># Kısa Exponential Backoff</span>
+                <span class="tok-comment"># Exponential Backoff: Sunucuyu boğmamak için her denemede biraz daha fazla bekle.</span>
+                time.sleep(<span class="tok-number">0.05</span> * attempt)
 
+    <span class="tok-comment"># Birincil model tüm denemelerde başarısız oldu -&gt; Yedek (Fallback) devreye giriyor!</span>
     start = time.perf_counter()
     fallback_result = fallback_fn()
     elapsed = (time.perf_counter() - start) * <span class="tok-number">1000</span>
@@ -1843,8 +1934,9 @@ Modül 7 Hands-On Lab: Production-Ready Engineering
 
 
 <span class="tok-keyword">def</span> evaluate_response(response: <span class="tok-builtin">str</span>, required_keywords: <span class="tok-builtin">tuple</span>[<span class="tok-builtin">str</span>, ...]) -&gt; <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, <span class="tok-builtin">object</span>]:
-    <span class="tok-docstring">&quot;&quot;&quot;Basit otomatik Evaluation: Cevap gerekli bilgileri içeriyor mu?&quot;&quot;&quot;</span>
+    <span class="tok-docstring">&quot;&quot;&quot;Basit otomatik Evaluation: Dönen cevap zorunlu bilgileri eksiksiz içeriyor mu?&quot;&quot;&quot;</span>
     lowered = response.lower()
+    <span class="tok-comment"># Eksik kalan anahtar kelimeleri tek satırda (List Comprehension) buluyoruz.</span>
     missing = [kw <span class="tok-keyword">for</span> kw <span class="tok-keyword">in</span> required_keywords <span class="tok-keyword">if</span> kw.lower() <span class="tok-keyword">not</span> <span class="tok-keyword">in</span> lowered]
     <span class="tok-keyword">return</span> {<span class="tok-string">&quot;passed&quot;</span>: <span class="tok-builtin">len</span>(missing) == <span class="tok-number">0</span>, <span class="tok-string">&quot;missing_keywords&quot;</span>: missing}
 
@@ -1854,13 +1946,17 @@ Modül 7 Hands-On Lab: Production-Ready Engineering
     attempts = {<span class="tok-string">&quot;count&quot;</span>: <span class="tok-number">0</span>}
 
     <span class="tok-keyword">def</span> unstable_primary() -&gt; <span class="tok-builtin">str</span>:
+        <span class="tok-comment"># Canlı ortamdaki geçici API hız sınırı (429 Rate Limit) hatasını simüle ediyoruz.</span>
         attempts[<span class="tok-string">&quot;count&quot;</span>] += <span class="tok-number">1</span>
         <span class="tok-keyword">raise</span> <span class="tok-builtin">RuntimeError</span>(<span class="tok-string">&quot;429 Rate Limit Exceeded&quot;</span>)
 
     <span class="tok-keyword">def</span> reliable_fallback() -&gt; <span class="tok-builtin">str</span>:
+        <span class="tok-comment"># Birincil model çöktüğünde kullanıcıyı yarı yolda bırakmayan yedek yanıt.</span>
         <span class="tok-keyword">return</span> <span class="tok-string">&quot;İade süresi 14 gündür ve kargo ücretsizdir.&quot;</span>
 
+    <span class="tok-comment"># 1. Retry + Fallback korumasıyla çağrıyı çalıştır.</span>
     answer = call_with_retry_and_fallback(unstable_primary, reliable_fallback, tracer, max_retries=<span class="tok-number">2</span>)
+    <span class="tok-comment"># 2. Üretilen cevabı otomatik Evaluation testinden geçir.</span>
     eval_report = evaluate_response(answer, required_keywords=(<span class="tok-string">&quot;14 gün&quot;</span>, <span class="tok-string">&quot;ücretsiz&quot;</span>))
 
     <span class="tok-builtin">print</span>(<span class="tok-string">&quot;Nihai Cevap:&quot;</span>, answer)
@@ -1950,12 +2046,15 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
 <span class="tok-keyword">import</span> threading
 <span class="tok-keyword">import</span> time
 <span class="tok-keyword">from</span> collections <span class="tok-keyword">import</span> <span class="tok-builtin">deque</span>
+<span class="tok-comment"># ThreadPoolExecutor: Aynı anda birden fazla müşteri isteğini paralel çalıştırır (Concurrency).</span>
 <span class="tok-keyword">from</span> concurrent.futures <span class="tok-keyword">import</span> <span class="tok-builtin">ThreadPoolExecutor</span>
 <span class="tok-keyword">from</span> dataclasses <span class="tok-keyword">import</span> <span class="tok-builtin">dataclass</span>, <span class="tok-builtin">field</span>
 
 
 <span class="tok-decorator">@dataclass</span>(frozen=<span class="tok-keyword">True</span>, slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> TraceSpan:
+    <span class="tok-docstring">&quot;&quot;&quot;Her müşteri isteğinin hangi rotadan geçtiğini ve kaç ms sürdüğünü kaydeder.&quot;&quot;&quot;</span>
+
     session_id: <span class="tok-builtin">str</span>
     step: <span class="tok-builtin">str</span>
     latency_ms: <span class="tok-builtin">float</span>
@@ -1964,6 +2063,8 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
 
 <span class="tok-decorator">@dataclass</span>(slots=<span class="tok-keyword">True</span>)
 <span class="tok-keyword">class</span> SupportSession:
+    <span class="tok-docstring">&quot;&quot;&quot;Her müşteriye özel son 5 mesajlık sınırlı konuşma geçmişi (Bounded Memory).&quot;&quot;&quot;</span>
+
     session_id: <span class="tok-builtin">str</span>
     history: <span class="tok-builtin">deque</span>[<span class="tok-builtin">str</span>] = <span class="tok-builtin">field</span>(default_factory=<span class="tok-keyword">lambda</span>: <span class="tok-builtin">deque</span>(maxlen=<span class="tok-number">5</span>))
 
@@ -1972,9 +2073,10 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
     <span class="tok-docstring">&quot;&quot;&quot;Eşzamanlı (Concurrent) müşteri isteklerini güvenle işleyen Capstone Agent.&quot;&quot;&quot;</span>
 
     <span class="tok-keyword">def</span> __init__(self) -&gt; <span class="tok-keyword">None</span>:
-        self._lock = threading.<span class="tok-builtin">RLock</span>()
+        self._lock = threading.<span class="tok-builtin">RLock</span>()  <span class="tok-comment"># Paylaşılan oturum ve trace listelerini korur.</span>
         self._sessions: <span class="tok-builtin">dict</span>[<span class="tok-builtin">str</span>, SupportSession] = {}
         self._traces: <span class="tok-builtin">list</span>[TraceSpan] = []
+        <span class="tok-comment"># Salt-okunur (Read-Only) bilgi bankası (RAG kaynağı) ve sipariş tablosu (Tool kaynağı).</span>
         self._knowledge_base = {
             <span class="tok-string">&quot;iade&quot;</span>: <span class="tok-string">&quot;Teslimattan itibaren 14 gün içinde ücretsiz iade hakkınız vardır.&quot;</span>,
             <span class="tok-string">&quot;garanti&quot;</span>: <span class="tok-string">&quot;Tüm elektronik ürünlerde 24 ay resmi distribütör garantisi bulunur.&quot;</span>,
@@ -1985,6 +2087,7 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
         }
 
     <span class="tok-keyword">def</span> _get_session(self, session_id: <span class="tok-builtin">str</span>) -&gt; SupportSession:
+        <span class="tok-docstring">&quot;&quot;&quot;Müşterinin oturumunu bulur; ilk kez geliyorsa izole yeni bir oturum açar.&quot;&quot;&quot;</span>
         <span class="tok-keyword">with</span> self._lock:
             sess = self._sessions.get(session_id)
             <span class="tok-keyword">if</span> sess <span class="tok-keyword">is</span> <span class="tok-keyword">None</span>:
@@ -1997,14 +2100,16 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
             self._traces.append(span)
 
     <span class="tok-keyword">def</span> handle_request(self, session_id: <span class="tok-builtin">str</span>, user_message: <span class="tok-builtin">str</span>) -&gt; <span class="tok-builtin">str</span>:
+        <span class="tok-docstring">&quot;&quot;&quot;Tek bir müşteri isteğini uçtan uca işler: Memory -&gt; Routing -&gt; Tool/RAG -&gt; Trace.&quot;&quot;&quot;</span>
         start = time.perf_counter()
         session = self._get_session(session_id)
 
+        <span class="tok-comment"># Kullanıcının sorusunu kendi oturumunun kısa süreli belleğine kaydet.</span>
         <span class="tok-keyword">with</span> self._lock:
             session.history.append(<span class="tok-string">f&quot;USER: {user_message}&quot;</span>)
 
         lowered = user_message.lower()
-        <span class="tok-comment"># 1. Tool Use Routing (Sipariş sorgusu)</span>
+        <span class="tok-comment"># 1. ROUTING -&gt; Tool Use: Mesajda sipariş kodu (&quot;ord-&quot;) geçiyorsa sipariş aracını kullan.</span>
         <span class="tok-keyword">if</span> <span class="tok-string">&quot;ord-&quot;</span> <span class="tok-keyword">in</span> lowered:
             order_id = <span class="tok-builtin">next</span>(
                 tok.strip(<span class="tok-string">&quot;.,?!&quot;</span>).upper() <span class="tok-keyword">for</span> tok <span class="tok-keyword">in</span> user_message.split() <span class="tok-keyword">if</span> tok.lower().startswith(<span class="tok-string">&quot;ord-&quot;</span>)
@@ -2012,20 +2117,23 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
             status = self._orders.get(order_id, <span class="tok-string">&quot;Sipariş bulunamadı.&quot;</span>)
             reply = <span class="tok-string">f&quot;[Tool:OrderLookup] {order_id} durumu -&gt; {status}&quot;</span>
             step_name = <span class="tok-string">&quot;tool_order_lookup&quot;</span>
-        <span class="tok-comment"># 2. RAG Routing (Politika bilgisi)</span>
+        <span class="tok-comment"># 2. ROUTING -&gt; RAG: İade veya garanti soruluyorsa şirket bilgi bankasından çek.</span>
         <span class="tok-keyword">elif</span> <span class="tok-string">&quot;iade&quot;</span> <span class="tok-keyword">in</span> lowered <span class="tok-keyword">or</span> <span class="tok-string">&quot;geri&quot;</span> <span class="tok-keyword">in</span> lowered:
             reply = <span class="tok-string">f&quot;[RAG:Policy] {self._knowledge_base[&#x27;iade&#x27;]}&quot;</span>
             step_name = <span class="tok-string">&quot;rag_policy_search&quot;</span>
         <span class="tok-keyword">elif</span> <span class="tok-string">&quot;garanti&quot;</span> <span class="tok-keyword">in</span> lowered:
             reply = <span class="tok-string">f&quot;[RAG:Policy] {self._knowledge_base[&#x27;garanti&#x27;]}&quot;</span>
             step_name = <span class="tok-string">&quot;rag_policy_search&quot;</span>
+        <span class="tok-comment"># 3. ROUTING -&gt; Fallback: Anlaşılmayan soruda halüsinasyon yerine netleştirme iste.</span>
         <span class="tok-keyword">else</span>:
             reply = <span class="tok-string">&quot;[Fallback] Talebinizi netleştirebilir misiniz? Sipariş (ORD-XXX), iade veya garanti sorabilirsiniz.&quot;</span>
             step_name = <span class="tok-string">&quot;fallback_clarify&quot;</span>
 
+        <span class="tok-comment"># Agent yanıtını da oturum belleğine kaydet.</span>
         <span class="tok-keyword">with</span> self._lock:
             session.history.append(<span class="tok-string">f&quot;AGENT: {reply}&quot;</span>)
 
+        <span class="tok-comment"># Toplam gecikmeyi (Latency) hesaplayıp Observability kaydını oluştur.</span>
         latency = (time.perf_counter() - start) * <span class="tok-number">1000</span>
         self._record_trace(TraceSpan(session_id, step_name, latency, <span class="tok-string">&quot;SUCCESS&quot;</span>))
         <span class="tok-keyword">return</span> reply
@@ -2037,6 +2145,7 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
 
 <span class="tok-keyword">def</span> main() -&gt; <span class="tok-keyword">None</span>:
     agent = ProductionSupportAgent()
+    <span class="tok-comment"># Aynı anda sisteme giren 4 farklı müşteri isteği (sess-1 iki kez soru soruyor).</span>
     requests = [
         (<span class="tok-string">&quot;sess-1&quot;</span>, <span class="tok-string">&quot;ORD-500 siparişim ne durumda?&quot;</span>),
         (<span class="tok-string">&quot;sess-2&quot;</span>, <span class="tok-string">&quot;Ürünü beğenmezsem iade süresi kaç gün?&quot;</span>),
@@ -2044,9 +2153,11 @@ Tüm modüllerin tek bir Thread-Safe sistemde birleşimi:
         (<span class="tok-string">&quot;sess-1&quot;</span>, <span class="tok-string">&quot;Teşekkürler, peki ORD-501 nerede?&quot;</span>),
     ]
 
-    <span class="tok-comment"># Thread-Safety testi: 4 isteği aynı anda paralel ThreadPoolExecutor ile çalıştırıyoruz.</span>
+    <span class="tok-comment"># Thread-Safety testi: 4 iş parçacığı (Worker Thread) aynı anda agent.handle_request çağırır.</span>
     <span class="tok-keyword">with</span> <span class="tok-builtin">ThreadPoolExecutor</span>(max_workers=<span class="tok-number">4</span>) <span class="tok-keyword">as</span> executor:
+        <span class="tok-comment"># executor.submit(...) her isteği arka planda anında başlatır ve bir Future nesnesi döner.</span>
         futures = [executor.submit(agent.handle_request, sid, msg) <span class="tok-keyword">for</span> sid, msg <span class="tok-keyword">in</span> requests]
+        <span class="tok-comment"># fut.result() ilgili Thread işini bitirdiğinde sonucu güvenle alır.</span>
         <span class="tok-keyword">for</span> (sid, msg), fut <span class="tok-keyword">in</span> <span class="tok-builtin">zip</span>(requests, futures):
             <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[{sid}] Soru: {msg}&quot;</span>)
             <span class="tok-builtin">print</span>(<span class="tok-string">f&quot;[{sid}] Yanıt: {fut.result()}\n&quot;</span>)
